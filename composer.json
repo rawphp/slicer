@@ -1,0 +1,32 @@
+{
+  "name": "rawphp/slicer",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tom Kaczocha",
+      "email": "tom@rawphp.org"
+    }
+  ],
+  "require": {
+    "symfony/console": "3.0.x-dev",
+    "symfony/event-dispatcher": "^3.0@dev"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.0.x-dev",
+    "symfony/filesystem": "^3.0@dev",
+    "symfony/finder": "^3.0@dev",
+    "symfony/process": "^3.0@dev",
+    "seld/phar-utils": "^1.0@dev"
+  },
+  "autoload": {
+    "classmap": [
+      "tests"
+    ],
+    "psr-0": {
+      "Slicer\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

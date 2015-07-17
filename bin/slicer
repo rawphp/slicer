@@ -1,0 +1,77 @@
+#!/usr/bin/env php
+<?php
+
+if ( 'cli' !== PHP_SAPI )
+{
+    echo 'Warning: Slicer should be invoked via the CLI version of PHP, not the ' . PHP_SAPI . ' SAPI' . PHP_EOL;
+}
+
+require __DIR__ . '/../src/bootstrap.php';
+
+use Slicer\Console\Application;
+
+error_reporting( -1 );
+
+if ( function_exists( 'ini_set' ) )
+{
+    @ini_set( 'display_errors', 1 );
+
+    $memoryInBytes = function ( $value )
+    {
+        $unit  = strtolower( substr( $value, -1, 1 ) );
+        $value = ( int ) $value;
+
+        switch ( $unit )
+        {
+            case 'g':
+                $value *= 1024;
+            // no break ( cumulative multiplier )
+            case 'm':
+                $value *= 1024;
+            // no break ( cumulative multiplier )
+            case 'k':
+                $value *= 1024;
+        }
+
+        return $value;
+    };
+
+    $memoryLimit = trim( ini_get( 'memory_limit' ) );
+
+    // Increase memory_limit if it is lower then 1GB
+
+    if ( -1 != $memoryLimit && $memoryInBytes( $memoryLimit ) < 1024 * 1024 * 1024 )
+    {
+        @ini_set( 'memory_limit', '1G' );
+    }
+
+    unset( $memoryInBytes, $memoryLimit );
+}
+
+// run the command application
+$app = new Application();
+$app->run();
+
+//setBasePath();
+
+/**
+ * Define BASE_PATH as base directory.
+ */
+function setBasePath()
+{
+//    $path = str_replace( [ 'phar://', 'update.phar' ], '', __DIR__ );
+//
+//    defined( 'BASE_PATH' ) || define( 'BASE_PATH', $path );
+}
+
+/**
+ * Returns the application configuration array.
+ *
+ * @return array
+ */
+function getUpdateCenterConfig()
+{
+//    $config = include BASE_PATH . '/../config/config.php';
+//
+//    return $config;
+}
