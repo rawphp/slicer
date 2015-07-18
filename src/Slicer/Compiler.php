@@ -54,31 +54,17 @@ class Compiler
         $this->versionDate = new DateTime( trim( $process->getOutput() ) );
         $this->versionDate->setTimezone( new DateTimeZone( 'UTC' ) );
 
-        $process = new Process( 'git describe --tags --exact-match HEAD' );
-
-        if ( 0 != $process->run() )
-        {
-            $this->version = trim( $process->getOutput() );
-        }
-        else
-        {
-            // get branch-alias defined in slicer.json for dev-master (if any)
-            $localConfig = __DIR__ . '/../../slicer.json';
-
-            $file        = new JsonFile( $localConfig );
-            $localConfig = $file->read();
-
-            if ( isset( $localConfig[ 'extra' ][ 'branch-alias' ][ 'dev-master' ] ) )
-            {
-                $this->branchAliasVersion = $localConfig[ 'extra' ][ 'branch-alias' ][ 'dev-master' ];
-            }
-        }
-
         $phar = new Phar( $pharFile, 0, 'slicer.phar' );
         $phar->setSignatureAlgorithm( Phar::SHA1 );
 
         $phar->startBuffering();
 
+        /**
+         * @param SplFileInfo $a
+         * @param SplFileInfo $b
+         *
+         * @return int
+         */
         $finderSort = function ( $a, $b )
         {
             return strcmp( strstr( $a->getRealPath(), '\\', '/' ), strstr( $b->getRealPath(), '\\', '/' ) );
@@ -89,7 +75,6 @@ class Compiler
             ->ignoreVCS( TRUE )
             ->name( '*.php' )
             ->notName( 'Compiler.php' )
-            ->notName( 'ClassLoader.php' )
             ->in( __DIR__ . '/..' )
             ->sort( $finderSort );
 
@@ -97,8 +82,6 @@ class Compiler
         {
             $this->addFile( $phar, $file );
         }
-
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/Autoload/ClassLoader.php' ), FALSE );
 
         $finder = new Finder();
         $finder->files()
@@ -111,6 +94,7 @@ class Compiler
             $this->addFile( $phar, $file, FALSE );
         }
 
+        // add vendors
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS( TRUE )
@@ -119,10 +103,12 @@ class Compiler
             ->exclude( 'Tests' )
             ->exclude( 'tests' )
             ->exclude( 'docs' )
+            ->exclude( 'installed.json' )
             ->in( __DIR__ . '/../../vendor/symfony/' )
-            ->in( __DIR__ . '/../../vendor/jsonlint' )
-            ->in( __DIR__ . '/../../vendor/cli-prompt' )
-            ->in( __DIR__ . '/../../vendor/justinrainbow/json-schema' )
+            ->in( __DIR__ . '/../../vendor/seld/jsonlint' )
+            ->in( __DIR__ . '/../../vendor/psr/http-message' )
+            ->in( __DIR__ . '/../../vendor/guzzlehttp' )
+            ->in( __DIR__ . '/../../vendor/composer' )
             ->sort( $finderSort );
 
         foreach ( $finder as $file )
@@ -130,22 +116,26 @@ class Compiler
             $this->addFile( $phar, $file );
         }
 
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/autoload.php' ) );
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_namespaces.php' ) );
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_psr4.php' ) );
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_classmap.php' ) );
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_real.php' ) );
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/autoload.php' ) );
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_classmap.php' ) );
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_files.php' ) );
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_namespaces.php' ) );
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_psr4.php' ) );
+//
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/autoload_real.php' ) );
+//
+//        if ( file_exists( __DIR__ . '/../../vendor/composer/include_paths.php' ) )
+//        {
+//            $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/include_paths.php' ) );
+//        }
+//
+//        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/ClassLoader.php' ) );
 
-        if ( file_exists( __DIR__ . '/../../vendor/composer/include_paths.php' ) )
-        {
-            $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/include_paths.php' ) );
-        }
-
-        $this->addFile( $phar, new SplFileInfo( __DIR__ . '/../../vendor/composer/ClassLoader.php' ) );
-        $this->addUpdateCenterBin( $phar );
+        $this->addSlicerBin( $phar );
 
         // Stubs
-        $phar->setStub( $this->getStub() );
+        $stub = $this->getStub();
+        $phar->setStub( $stub );
 
         $phar->stopBuffering();
 
@@ -169,9 +159,9 @@ class Compiler
      * @param string    $file
      * @param bool|TRUE $strip
      */
-    private function addFile( Phar $phar, $file, $strip = TRUE )
+    private function addFile( Phar $phar, $file, $strip = FALSE )
     {
-        $path = strstr( str_replace( dirname( dirname( __DIR__ ) ) . DIRECTORY_SEPARATOR, '', $file->getRealPath() ), '\\', '/' );
+        $path = strtr( str_replace( dirname( dirname( __DIR__ ) ) . DIRECTORY_SEPARATOR, '', $file->getRealPath() ), '\\', '/' );
 
         $content = file_get_contents( $file );
 
@@ -184,12 +174,14 @@ class Compiler
             $content = "\n" . $content . "\n";
         }
 
-        if ( 'src/Update/UpdateCenter.php' === $path )
+        if ( 'src/Slicer/Slicer.php' === $path )
         {
             $content = str_replace( '@package_version@', $this->version, $content );
             $content = str_replace( '@package_branch_alias_version@', $this->branchAliasVersion, $content );
             $content = str_replace( '@release_date@', $this->versionDate->format( 'Y-m-d H:i:s' ), $content );
         }
+
+        echo 'Adding File: ' . $path . PHP_EOL;
 
         $phar->addFromString( $path, $content );
     }
@@ -245,12 +237,12 @@ class Compiler
      *
      * @param Phar $phar
      */
-    private function addUpdateCenterBin( Phar $phar )
+    private function addSlicerBin( Phar $phar )
     {
         $content = file_get_contents( __DIR__ . '/../../bin/slicer' );
         $content = preg_replace( '{^#!/usr/bin/env php\s*}', '', $content );
 
-        $phar->addFromString( 'bin/composer', $content );
+        $phar->addFromString( 'bin/slicer', $content );
     }
 
     /**
@@ -263,6 +255,7 @@ class Compiler
         $stub = <<<'EOF'
 #!/usr/bin/env php
 <?php
+
 /*
  * This file is part of Slicer.
  *
@@ -277,10 +270,10 @@ Phar::mapPhar( 'slicer.phar' );
 EOF;
 
         // add warning once the phar is older than 60 days
-        if ( preg_match( '', $this->version ) )
+        if ( preg_match( '{^[a-f0-9]+$}', $this->version ) )
         {
-            $warningTime = $this->versionDate->format( 'U' ) + 60 * 86400;
-            $stub .= "define( 'SLICER_DEV_WARNING_TIME', $warningTime);\n";
+            $warningTime = $this->versionDate->format( 'U' ) + ( 60 * 86400 );
+            $stub .= "define( 'SLICER_DEV_WARNING_TIME', $warningTime );\n";
         }
 
         return $stub . <<<'EOF'

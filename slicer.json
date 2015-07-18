@@ -1,0 +1,35 @@
+{
+  "app": {
+    "name": "slicer/slicer",
+    "description": "",
+    "app_key": "",
+    "app_secret": ""
+  },
+  "options": {
+    "update": {
+      "backup-files": true,
+      "backup-database": true
+    }
+  },
+  "update_file": "Slicer\\Update",
+  "change_provider": {
+    "driver": "Git",
+    "class": "Slicer\\Provider\\GitProvider"
+  },
+  "signing": {
+    "private_key": "private.key",
+    "public_key": "public.pem"
+  },
+  "storage": {
+    "source": {
+      "tmp-dir": "slicer/tmp"
+    },
+    "destination": {
+      "update-dir": "slicer/updates"
+    }
+  },
+  "backup": {
+    "exclude-dirs": [ "cache", "fake" ]
+  },
+  "base_dir": ""
+}

@@ -2,6 +2,8 @@
 
 namespace Slicer;
 
+use Slicer\Contract\IBackupManager;
+use Slicer\Contract\IUpdateManager;
 use Slicer\Downloader\DownloadManager;
 use Slicer\Installer\InstallationManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -21,10 +23,14 @@ class Slicer
     protected $downloadManager;
     /** @var  InstallationManager */
     protected $installationManager;
-    /** @var  array */
+    /** @var  Config */
     protected $config;
     /** @var  EventDispatcher */
     protected $eventDispatcher;
+    /** @var  IUpdateManager */
+    protected $updateManager;
+    /** @var  IBackupManager */
+    protected $backupManager;
 
     /**
      * @return DownloadManager
@@ -59,7 +65,7 @@ class Slicer
     }
 
     /**
-     * @return array
+     * @return Config
      */
     public function getConfig()
     {
@@ -67,7 +73,7 @@ class Slicer
     }
 
     /**
-     * @param array $config
+     * @param Config $config
      */
     public function setConfig( $config )
     {
@@ -88,5 +94,37 @@ class Slicer
     public function setEventDispatcher( $eventDispatcher )
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @return IUpdateManager
+     */
+    public function getUpdateManager()
+    {
+        return $this->updateManager;
+    }
+
+    /**
+     * @param IUpdateManager $updateManager
+     */
+    public function setUpdateManager( $updateManager )
+    {
+        $this->updateManager = $updateManager;
+    }
+
+    /**
+     * @return IBackupManager
+     */
+    public function getBackupManager()
+    {
+        return $this->backupManager;
+    }
+
+    /**
+     * @param IBackupManager $backupManager
+     */
+    public function setBackupManager( $backupManager )
+    {
+        $this->backupManager = $backupManager;
     }
 }

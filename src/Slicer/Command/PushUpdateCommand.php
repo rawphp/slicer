@@ -2,22 +2,21 @@
 
 namespace Slicer\Command;
 
-use Slicer\Contract\IUpdateManager;
-use Slicer\Service;
+use Slicer\Contract\IDownloadManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class UpdateCommand
+ * Class PushUpdateCommand
  *
- * @package RawPHP\Slicer\Command
+ * @package Slicer\Command
  */
-class UpdateCommand extends Command
+class PushUpdateCommand extends Command
 {
-    /** @var  IUpdateManager */
-    protected $updateManager;
+    /** @var  IDownloadManager */
+    protected $downloadManager;
 
     /**
      * Configure command.
@@ -25,8 +24,8 @@ class UpdateCommand extends Command
     protected function configure()
     {
         $this
-            ->setName( 'update' )
-            ->setDescription( 'Run update' )
+            ->setName( 'push' )
+            ->setDescription( 'Push update to server' )
             ->addArgument(
                 'version',
                 InputArgument::OPTIONAL,
@@ -45,8 +44,7 @@ class UpdateCommand extends Command
      */
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $this->updateManager = $this->getApplication()->getSlicer()->getUpdateManager();
+        $this->downloadManager = $this->getApplication()->getSlicer()->getDownloadManager();
 
-        $this->updateManager->update( NULL );
     }
 }

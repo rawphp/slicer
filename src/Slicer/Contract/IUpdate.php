@@ -2,6 +2,8 @@
 
 namespace Slicer\Contract;
 
+use DateTime;
+
 /**
  * Interface IUpdate
  *
@@ -9,6 +11,20 @@ namespace Slicer\Contract;
  */
 interface IUpdate
 {
+    /**
+     * Check if update is ready to be applied.
+     *
+     * @return bool
+     */
+    public function isEnabled();
+
+    /**
+     * Get date update was run.
+     *
+     * @return DateTime
+     */
+    public function getDateUpdateApplied();
+
     /**
      * Copy new and updated files into the project.
      *

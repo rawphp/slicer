@@ -48,30 +48,47 @@ if ( function_exists( 'ini_set' ) )
     unset( $memoryInBytes, $memoryLimit );
 }
 
+if ( !function_exists( 'base_path' ) )
+{
+    /**
+     * Get the path to the base of the install.
+     *
+     * @param  string $path
+     *
+     * @return string
+     */
+    function base_path( $path = '' )
+    {
+        $dir = ( isset( $_SERVER[ 'PWD' ] ) ? $_SERVER[ 'PWD' ] : __DIR__ . '/../' );
+
+        return strtr( str_replace( [ 'phar://', 'update.phar' ], '', $dir ) . ( $path ? DIRECTORY_SEPARATOR . $path : $path ), '\\', '/' );
+    }
+}
+
+putenv( 'SLICER_HOME=' . __DIR__ );
+putenv( 'SLICER=' . base_path( 'slicer.json' ) );
+
 // run the command application
 $app = new Application();
 $app->run();
-
-//setBasePath();
-
-/**
- * Define BASE_PATH as base directory.
- */
-function setBasePath()
-{
-//    $path = str_replace( [ 'phar://', 'update.phar' ], '', __DIR__ );
-//
-//    defined( 'BASE_PATH' ) || define( 'BASE_PATH', $path );
-}
 
 /**
  * Returns the application configuration array.
  *
  * @return array
  */
-function getUpdateCenterConfig()
+function get_slicer_config()
 {
-//    $config = include BASE_PATH . '/../config/config.php';
-//
-//    return $config;
+    $file = base_path( 'slicer.json' );
+
+    if ( file_exists( $file ) )
+    {
+        return json_decode( file_get_contents( $file ), TRUE );
+    }
+    else
+    {
+        echo PHP_EOL . 'Unable to find "slicer.json". Are you sure you are in the root directory?' . PHP_EOL;
+
+        exit( 1 );
+    }
 }

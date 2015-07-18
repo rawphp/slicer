@@ -29,7 +29,7 @@ class UpdateService
     protected $backupDatabaseBeforeUpdate;
     /** @var  array */
     private $_cleanupFiles;
-
+    /** @var  string */
     private $_tmpDir;
 
     /**
@@ -159,7 +159,7 @@ class UpdateService
 
     }
 
-    public function downgrade()
+    public function rollback()
     {
 
     }

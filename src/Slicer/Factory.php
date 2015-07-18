@@ -2,10 +2,11 @@
 
 namespace Slicer;
 
-use Composer\IO\IOInterface;
+use Slicer\Backup\BackupManager;
 use Slicer\Downloader\DownloadManager;
 use Slicer\Installer\InstallationManager;
 use RuntimeException;
+use Slicer\Updater\UpdateManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -50,36 +51,114 @@ class Factory
     }
 
     /**
-     * Create a Slicer instance.
+     * Get cache directory.
      *
-     * @param array  $localConfig
+     * @param string $home
+     *
+     * @return string
+     */
+    protected static function getCacheDir( $home )
+    {
+        $cacheDir = getenv( 'SLICER_CACHE_DIR' );
+
+        if ( !$cacheDir )
+        {
+            if ( defined( 'PHP_WINDOWS_VERSION_MAJOR' ) )
+            {
+                if ( $cacheDir = getenv( 'LOCALAPPDATA' ) )
+                {
+                    $cacheDir .= '/Slicer';
+                }
+                else
+                {
+                    $cacheDir = $home . '/cache';
+                }
+
+                $cacheDir = strtr( $cacheDir, '\\', '/' );
+            }
+            else
+            {
+                $cacheDir = $home . '/cache';
+            }
+        }
+
+        return $cacheDir;
+    }
+
+    /**
+     * Create config.
+     *
      * @param string $cwd
      *
-     * @return Slicer
+     * @return Config
      */
-    public function createSlicer( $localConfig = NULL, $cwd = NULL )
+    public static function createConfig( $cwd = NULL )
     {
         $cwd = $cwd ?: getcwd();
 
-        // load Slider configuration
-        if ( NULL === $localConfig )
+        // determine home and cache dirs
+        $home     = $cwd; // self::getHomeDir();
+        $cacheDir = self::getCacheDir( $home );
+
+        // protect directory against web access. Since HOME could be
+        // the www-data's user home and be web-accessible it is a
+        // potential security risk
+        foreach ( [ $home, $cacheDir ] as $dir )
         {
-            $localConfig = '';
+            if ( !file_exists( $dir . '/.htaccess' ) )
+            {
+                if ( !is_dir( $dir ) )
+                {
+                    @mkdir( $dir, 0777, TRUE );
+                }
+
+                @file_put_contents( $dir . '/.htaccess', 'Deny from all' );
+            }
         }
 
-        $config = [ ];
+        $settings = json_decode( file_get_contents( Factory::getSlicerFile() ), TRUE );
+
+        $settings[ 'home' ]      = $home;
+        $settings[ 'cache_dir' ] = $cacheDir;
+        $settings[ 'cwd' ]       = $cwd;
+
+        if ( '' === $settings[ 'base_dir' ] )
+        {
+            $settings[ 'base_dir' ] = $cwd;
+        }
+
+        $config = new Config( $settings );
+
+        return $config;
+    }
+
+    /**
+     * Get the project slicer file.
+     *
+     * @return string
+     */
+    public static function getSlicerFile()
+    {
+        return trim( getenv( 'SLICER' ) ) ?: './slicer.json';
+    }
+
+    /**
+     * Create a Slicer instance.
+     *
+     * @return Slicer
+     */
+    public function createSlicer()
+    {
+        $config = Factory::createConfig();
 
         $slicer = new Slicer();
         $slicer->setConfig( $config );
 
-        $dispatcher = new EventDispatcher();
-        $slicer->setEventDispatcher( $dispatcher );
-
-        $installer = new InstallationManager();
-        $slicer->setInstallationManager( $installer );
-
-        $downloader = new DownloadManager();
-        $slicer->setDownloadManager( $downloader );
+        $slicer->setEventDispatcher( new EventDispatcher() );
+        $slicer->setUpdateManager( new UpdateManager( $config ) );
+        $slicer->setDownloadManager( new DownloadManager( $config ) );
+        $slicer->setBackupManager( new BackupManager( $config ) );
+        $slicer->setInstallationManager( new InstallationManager( $config ) );
 
         return $slicer;
     }
@@ -87,15 +166,12 @@ class Factory
     /**
      * Create new factory instance.
      *
-     * @param IOInterface $io
-     * @param array       $config
-     *
      * @return Slicer
      */
-    public static function create( IOInterface $io, $config = NULL )
+    public static function create()
     {
         $factory = new static();
 
-        return $factory->createSlicer( $io, $config );
+        return $factory->createSlicer();
     }
 }

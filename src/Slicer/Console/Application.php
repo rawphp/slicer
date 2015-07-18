@@ -8,7 +8,8 @@ use Slicer\Command\BackupCommand;
 use Slicer\Command\CheckCommand;
 use Slicer\Command\ConfigCommand;
 use Slicer\Command\CreateCommand;
-use Slicer\Command\SelfUpdateCommand;
+use Slicer\Command\PullUpdateCommand;
+use Slicer\Command\PushUpdateCommand;
 use Slicer\Command\UpdateCommand;
 use Slicer\Factory;
 use Slicer\Slicer;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Application extends BaseApplication
 {
+    /** @var  Slicer */
     protected $slicer;
     /** @var  InputInterface */
     protected $input;
@@ -84,11 +86,9 @@ class Application extends BaseApplication
      */
     public function doRun( InputInterface $input, OutputInterface $output )
     {
-        //ErrorHandler::register( $this->io );
-
         if ( 50302 > PHP_VERSION_ID )
         {
-            $output->writeln( '<warning>Slicer only officially supports PHP 5.3.2 and above, you will most likely encounter problems with your PHP ' . PHP_VERSION . ', upgrading is strongly recommended.</warning>' );
+            $output->writeln( '<caution>Slicer only officially supports PHP 5.3.2 and above, you will most likely encounter problems with your PHP ' . PHP_VERSION . ', upgrading is strongly recommended.</caution>' );
         }
 
         if ( defined( 'SLICER_DEV_WARNING_TIME' ) )
@@ -166,7 +166,7 @@ class Application extends BaseApplication
         {
             try
             {
-                $this->slicer = Factory::create( NULL, NULL );
+                $this->slicer = Factory::create();
             }
             catch ( InvalidArgumentException $e )
             {
@@ -205,12 +205,14 @@ class Application extends BaseApplication
                 new ConfigCommand(),
                 new CreateCommand(),
                 new UpdateCommand(),
+                new PushUpdateCommand(),
+                new PullUpdateCommand(),
             ]
         );
 
         if ( 'phar:' === substr( __FILE__, 0, 5 ) )
         {
-            $commands = new SelfUpdateCommand();
+            //$commands = new SelfUpdateCommand();
         }
 
         return $commands;

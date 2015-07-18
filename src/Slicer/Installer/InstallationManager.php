@@ -2,12 +2,14 @@
 
 namespace Slicer\Installer;
 
+use Slicer\Manager;
+
 /**
  * Class InstallationManager
  *
  * @package Slicer\Installer
  */
-class InstallationManager
+class InstallationManager extends Manager
 {
 
 }

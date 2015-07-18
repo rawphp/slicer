@@ -35,6 +35,5 @@ class CheckCommand extends Command
 
     public function execute( InputInterface $input, OutputInterface $output )
     {
-
     }
 }

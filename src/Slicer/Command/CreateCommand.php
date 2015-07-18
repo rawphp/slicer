@@ -2,6 +2,7 @@
 
 namespace Slicer\Command;
 
+use Slicer\Contract\IUpdateManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,6 +15,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CreateCommand extends Command
 {
+    /** @var IUpdateManager */
+    protected $updateManager;
+
     protected function configure()
     {
         $this
@@ -41,6 +45,8 @@ class CreateCommand extends Command
 
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $this->service->createUpdate( $input->getArgument( 'starting-version' ), $input->getArgument( 'ending-version' ) );
+        $this->updateManager = $this->getApplication()->getSlicer()->getUpdateManager();
+
+        $this->updateManager->createUpdate( $input->getArgument( 'starting-version' ), $input->getArgument( 'ending-version' ) );
     }
 }
