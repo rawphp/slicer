@@ -108,6 +108,7 @@ class Compiler
             ->in( __DIR__ . '/../../vendor/seld/jsonlint' )
             ->in( __DIR__ . '/../../vendor/psr/http-message' )
             ->in( __DIR__ . '/../../vendor/guzzlehttp' )
+            ->in( __DIR__ . '/../../vendor/rappasoft' )
             ->in( __DIR__ . '/../../vendor/composer' )
             ->sort( $finderSort );
 

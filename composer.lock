@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c52bc8b678ae604257c161bb5170dbb7",
+    "hash": "5962a9cd1b1b7244536e5b278960a48c",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -225,6 +225,46 @@
                 "response"
             ],
             "time": "2015-05-04 20:22:00"
+        },
+        {
+            "name": "rappasoft/laravel-helpers",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rappasoft/laravel-helpers.git",
+                "reference": "361e998411ed6eb4bf618a1157c54991d92541fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rappasoft/laravel-helpers/zipball/361e998411ed6eb4bf618a1157c54991d92541fd",
+                "reference": "361e998411ed6eb4bf618a1157c54991d92541fd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Rappa",
+                    "email": "rappa819@gmail.com"
+                }
+            ],
+            "description": "Laravel Helpers for Non-Laravel Projects",
+            "keywords": [
+                "helpers",
+                "laravel"
+            ],
+            "time": "2015-02-05 05:38:13"
         },
         {
             "name": "seld/jsonlint",
@@ -1145,7 +1185,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1e8852217d587efb817c47ec37b889e5c692d376",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/87f4040c34870535b120b2eedb4992e9e63f1405",
                 "reference": "1e8852217d587efb817c47ec37b889e5c692d376",
                 "shasum": ""
             },
@@ -1691,6 +1731,7 @@
         "seld/phar-utils": 20,
         "seld/jsonlint": 20,
         "guzzlehttp/guzzle": 20,
+        "rappasoft/laravel-helpers": 20,
         "phpunit/phpunit": 20,
         "mockery/mockery": 20
     },

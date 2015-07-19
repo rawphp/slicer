@@ -2,6 +2,8 @@
 
 namespace Slicer\Command;
 
+use InvalidArgumentException;
+use Slicer\Console\Application;
 use Slicer\Contract\IUpdateManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,17 +20,14 @@ class CreateCommand extends Command
     /** @var IUpdateManager */
     protected $updateManager;
 
+    /**
+     * Configure command.
+     */
     protected function configure()
     {
         $this
             ->setName( 'create' )
             ->setDescription( 'Create a new update' )
-            ->addArgument(
-                'provider',
-                InputArgument::REQUIRED,
-                'The change file provider to use',
-                NULL
-            )
             ->addArgument(
                 'starting-version',
                 InputArgument::REQUIRED,
@@ -40,13 +39,45 @@ class CreateCommand extends Command
                 InputArgument::REQUIRED,
                 'The name of the ending version',
                 NULL
+            )
+            ->addArgument(
+                'provider',
+                InputArgument::OPTIONAL,
+                'The change file provider to use',
+                NULL
             );
     }
 
+    /**
+     * Execute command.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $this->updateManager = $this->getApplication()->getSlicer()->getUpdateManager();
+        /** @var Application $app */
+        $app                 = $this->getApplication();
+        $this->updateManager = $app->getSlicer()->getUpdateManager();
 
-        $this->updateManager->createUpdate( $input->getArgument( 'starting-version' ), $input->getArgument( 'ending-version' ) );
+        if ( NULL === $this->updateManager->getChangeProvider() && !$input->hasArgument( 'provider' ) )
+        {
+            throw new InvalidArgumentException( 'Change Provider must be specified either in Slicer.json or as an argument' );
+        }
+
+        if ( $input->hasArgument( 'provider' ) )
+        {
+            $provider = $input->getArgument( 'provider' );
+            die( $provider );
+        }
+
+        $start = $input->getArgument( 'starting-version' );
+        $end   = $input->getArgument( 'ending-version' );
+
+        $result = $this->updateManager->createUpdate( $start, $end );
+
+
     }
 }

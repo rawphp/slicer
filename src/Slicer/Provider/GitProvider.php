@@ -27,9 +27,7 @@ class GitProvider implements IChangeProvider
      */
     public function getChangedFiles( $baseDir, $from, $to )
     {
-        $dir = base_path( 'storage/auto-update/tmp' );
-
-        $patchFile = $dir . DIRECTORY_SEPARATOR . 'patch.tmp';
+        $patchFile = 'patch-' . str_random( 8 ) . '.tmp';
 
         if ( file_exists( $patchFile ) )
         {
@@ -101,7 +99,12 @@ class GitProvider implements IChangeProvider
         }
         catch ( Exception $e )
         {
-            dd( $e );
+            echo $e->getMessage() . PHP_EOL;
+
+            if ( file_exists( $patchFile ) )
+            {
+                unlink( $patchFile );
+            }
         }
 
         return NULL;

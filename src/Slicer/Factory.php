@@ -165,10 +165,15 @@ class Factory
         $slicer->setBackupManager( new BackupManager( $config ) );
         $slicer->setInstallationManager( new InstallationManager( $config ) );
 
-        $slicer->getUpdateManager()->setEventDispatcher( $slicer->getEventDispatcher() );
-        $slicer->getDownloadManager()->setEventDispatcher( $slicer->getEventDispatcher() );
-        $slicer->getBackupManager()->setEventDispatcher( $slicer->getEventDispatcher() );
-        $slicer->getInstallationManager()->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getUpdateManager()
+            ->setDownloadManager( $slicer->getDownloadManager() )
+            ->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getDownloadManager()
+            ->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getBackupManager()
+            ->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getInstallationManager()
+            ->setEventDispatcher( $slicer->getEventDispatcher() );
 
         return $slicer;
     }
