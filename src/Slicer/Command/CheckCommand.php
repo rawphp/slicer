@@ -14,11 +14,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CheckCommand extends Command
 {
+    /**
+     * Configure command.
+     */
     protected function configure()
     {
         $this
             ->setName( 'check' )
-            ->setDescription( 'Check for updates' )
+            ->setDescription( 'Check for available updates on the server' )
             ->addArgument(
                 'app-key',
                 InputArgument::REQUIRED,
@@ -33,6 +36,14 @@ class CheckCommand extends Command
             );
     }
 
+    /**
+     * Execute the command.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|null|void
+     */
     public function execute( InputInterface $input, OutputInterface $output )
     {
     }

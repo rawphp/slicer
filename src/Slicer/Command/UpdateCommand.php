@@ -2,8 +2,10 @@
 
 namespace Slicer\Command;
 
+use Slicer\Console\Application;
 use Slicer\Contract\IUpdateManager;
 use Slicer\Service;
+use Slicer\Slicer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,7 +28,7 @@ class UpdateCommand extends Command
     {
         $this
             ->setName( 'update' )
-            ->setDescription( 'Run update' )
+            ->setDescription( 'Run locally available updates' )
             ->addArgument(
                 'version',
                 InputArgument::OPTIONAL,
@@ -45,7 +47,9 @@ class UpdateCommand extends Command
      */
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $this->updateManager = $this->getApplication()->getSlicer()->getUpdateManager();
+        /** @var Application $app */
+        $app                 = $this->getApplication();
+        $this->updateManager = $app->getSlicer()->getUpdateManager();
 
         $this->updateManager->update( NULL );
     }

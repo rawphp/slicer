@@ -26,7 +26,7 @@ class PullUpdateCommand extends Command
     {
         $this
             ->setName( 'pull' )
-            ->setDescription( 'Pull updates from server' )
+            ->setDescription( 'Pull available updates from the server' )
             ->addArgument( 'version', InputArgument::OPTIONAL, 'Upgrade version', NULL )
             ->addOption( 'all', 'a', InputOption::VALUE_NONE, 'Download all updates if specified' )
             ->addOption( 'applied', NULL, InputOption::VALUE_NONE, 'Download applied updates if specified' )

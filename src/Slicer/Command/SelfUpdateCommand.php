@@ -46,6 +46,15 @@ EOT
             );
     }
 
+    /**
+     * Execute command.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     * @throws Exception
+     */
     protected function execute( InputInterface $input, OutputInterface $output )
     {
         $baseUrl          = ( extension_loaded( 'openssl' ) ? 'https' : 'http' ) . '://' . self::HOMEPAGE;
@@ -136,6 +145,16 @@ EOT
         }
     }
 
+    /**
+     * Rollback Slicer version.
+     *
+     * @param OutputInterface $output
+     * @param string          $rollbackDir
+     * @param string          $localFilename
+     *
+     * @return int
+     * @throws Exception
+     */
     protected function rollback( OutputInterface $output, $rollbackDir, $localFilename )
     {
         $rollbackVersion = $this->getLastBackupVersion( $rollbackDir );
@@ -175,6 +194,16 @@ EOT
         return 0;
     }
 
+    /**
+     * Set phar.
+     *
+     * @param string $localFilename
+     * @param string $newFilename
+     * @param string $backupTarget
+     *
+     * @return Exception
+     * @throws Exception
+     */
     protected function setLocalPhar( $localFilename, $newFilename, $backupTarget = NULL )
     {
         try
