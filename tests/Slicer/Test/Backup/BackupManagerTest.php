@@ -65,6 +65,11 @@ class BackupManagerTest extends TestCase
 
         $this->preVerified  = FALSE;
         $this->postVerified = FALSE;
+
+        if ( file_exists( base_path( 'extracted' ) ) )
+        {
+            ( new Filesystem() )->remove( [ base_path( 'extracted' ) ] );
+        }
     }
 
     /**
@@ -96,6 +101,8 @@ class BackupManagerTest extends TestCase
 
     /**
      * Test backup with pre- and post- backup events.
+     *
+     * @group slow
      */
     public function testBackupWithPreAndPostBackupEvent()
     {
@@ -124,6 +131,8 @@ class BackupManagerTest extends TestCase
 
     /**
      * Test backup and extract and check files.
+     *
+     * @group slow
      */
     public function testBackupAndCheckFiles()
     {

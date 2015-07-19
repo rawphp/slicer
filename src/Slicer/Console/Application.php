@@ -6,7 +6,7 @@ use Exception;
 use InvalidArgumentException;
 use Slicer\Command\BackupCommand;
 use Slicer\Command\CheckCommand;
-use Slicer\Command\ConfigCommand;
+use Slicer\Command\InitializeCommand;
 use Slicer\Command\CreateCommand;
 use Slicer\Command\PullUpdateCommand;
 use Slicer\Command\PushUpdateCommand;
@@ -202,7 +202,7 @@ class Application extends BaseApplication
             [
                 new BackupCommand(),
                 new CheckCommand(),
-                new ConfigCommand(),
+                new InitializeCommand(),
                 new CreateCommand(),
                 new UpdateCommand(),
                 new PushUpdateCommand(),

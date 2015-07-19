@@ -3,9 +3,9 @@
 namespace Slicer;
 
 use Slicer\Contract\IBackupManager;
+use Slicer\Contract\IDownloadManager;
+use Slicer\Contract\IInstallationManager;
 use Slicer\Contract\IUpdateManager;
-use Slicer\Downloader\DownloadManager;
-use Slicer\Installer\InstallationManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -19,9 +19,9 @@ class Slicer
     const BRANCH_ALIAS_VERSION = '@package_branch_alias_version@';
     const RELEASE_DATE = '@release_date@';
 
-    /** @var  DownloadManager */
+    /** @var  IDownloadManager */
     protected $downloadManager;
-    /** @var  InstallationManager */
+    /** @var  IInstallationManager */
     protected $installationManager;
     /** @var  Config */
     protected $config;
@@ -33,7 +33,7 @@ class Slicer
     protected $backupManager;
 
     /**
-     * @return DownloadManager
+     * @return IDownloadManager
      */
     public function getDownloadManager()
     {
@@ -41,11 +41,11 @@ class Slicer
     }
 
     /**
-     * @param DownloadManager $downloadManager
+     * @param IDownloadManager $downloadManager
      *
      * @return Slicer
      */
-    public function setDownloadManager( DownloadManager $downloadManager )
+    public function setDownloadManager( IDownloadManager $downloadManager )
     {
         $this->downloadManager = $downloadManager;
 
@@ -53,7 +53,7 @@ class Slicer
     }
 
     /**
-     * @return InstallationManager
+     * @return IInstallationManager
      */
     public function getInstallationManager()
     {
@@ -61,11 +61,11 @@ class Slicer
     }
 
     /**
-     * @param InstallationManager $installationManager
+     * @param IInstallationManager $installationManager
      *
      * @return Slicer
      */
-    public function setInstallationManager( InstallationManager $installationManager )
+    public function setInstallationManager( IInstallationManager $installationManager )
     {
         $this->installationManager = $installationManager;
 
