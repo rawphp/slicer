@@ -6,6 +6,8 @@ use Exception;
 use InvalidArgumentException;
 use Slicer\Contract\IInstallationManager;
 use Slicer\Contract\ISlicerFileBuilder;
+use Slicer\Event\PostInstallEvent;
+use Slicer\Event\PreInstallEvent;
 use Slicer\Manager;
 
 /**
@@ -41,23 +43,35 @@ class InstallationManager extends Manager implements IInstallationManager
         {
             throw new InvalidArgumentException( 'Slicer\Contract\ISlicerFileBuilder must be set before running install()' );
         }
+
+        $res = FALSE;
+
         try
         {
+            $event = new PreInstallEvent( $this->filename, $this->fileBuilder );
+            $this->event->dispatch( PreInstallEvent::class, $event );
+
+            $this->filename    = $event->getFilename();
+            $this->fileBuilder = $event->getFileBuilder();
+
             $result = $this->fileBuilder->buildFile();
 
             if ( '' !== $result )
             {
                 file_put_contents( base_path( $this->filename ), $result );
 
-                return TRUE;
+                $res = TRUE;
             }
-
-            return FALSE;
         }
         catch ( Exception $e )
         {
-            return FALSE;
+            $res = FALSE;
         }
+
+        $event = new PostInstallEvent( $this->filename, $this->fileBuilder, $res );
+        $this->event->dispatch( PostInstallEvent::class, $event );
+
+        return $event->getResult();
     }
 
     /**
