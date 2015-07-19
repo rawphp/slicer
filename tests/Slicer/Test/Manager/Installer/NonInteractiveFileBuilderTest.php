@@ -1,14 +1,14 @@
 <?php
 
-namespace Slicer\Test\Installer;
+namespace Slicer\Test\Manager\Installer;
 
-use Slicer\Installer\NonInteractiveFileBuilder;
+use Slicer\Manager\Installer\NonInteractiveFileBuilder;
 use Slicer\TestCase;
 
 /**
  * Class NonInteractiveFileBuilderTest
  *
- * @package Slicer\Test\Installer
+ * @package Slicer\Test\Manager\Installer
  */
 class NonInteractiveFileBuilderTest extends TestCase
 {

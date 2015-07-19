@@ -1,22 +1,23 @@
 <?php
 
-namespace Slicer\Test\Installer;
+namespace Slicer\Test\Manager\Installer;
 
 use InvalidArgumentException;
 use Slicer\Contract\ISlicerFileBuilder;
 use Slicer\Factory;
-use Slicer\Installer\InstallationManager;
-use Slicer\Installer\InteractiveFileBuilder;
-use Slicer\Installer\NonInteractiveFileBuilder;
+use Slicer\Manager\Installer\InstallationManager;
+use Slicer\Manager\Installer\InteractiveFileBuilder;
+use Slicer\Manager\Installer\NonInteractiveFileBuilder;
 use Slicer\TestCase;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class InstallationManagerTest
  *
- * @package Slicer\Test\Installer
+ * @package Slicer\Test\Manager\Installer
  */
 class InstallationManagerTest extends TestCase
 {
@@ -33,6 +34,7 @@ class InstallationManagerTest extends TestCase
         parent::setUp();
 
         $this->manager = new InstallationManager( Factory::createConfig() );
+        $this->manager->setEventDispatcher( new EventDispatcher() );
         $this->manager->setFilename( $this->fileName );
     }
 
@@ -76,7 +78,7 @@ class InstallationManagerTest extends TestCase
      * @param ISlicerFileBuilder $builder
      *
      * @dataProvider dataForFileBuilders
-     * @group interactive
+     * @group        interactive
      */
     public function testInstallWithFileBuilder( $builder )
     {

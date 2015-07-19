@@ -1,12 +1,12 @@
 <?php
 
-namespace Slicer\Backup;
+namespace Slicer\Manager\Backup;
 
 use Exception;
-use Slicer\Contract\IBackupManager;
 use Slicer\Event\PostBackupEvent;
 use Slicer\Event\PreBackupEvent;
-use Slicer\Manager;
+use Slicer\Manager\Contract\IBackupManager;
+use Slicer\Manager\Manager;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use ZipArchive;
@@ -14,7 +14,7 @@ use ZipArchive;
 /**
  * Class BackupManager
  *
- * @package Slicer\Backup
+ * @package Slicer\Manager\Backup
  */
 class BackupManager extends Manager implements IBackupManager
 {

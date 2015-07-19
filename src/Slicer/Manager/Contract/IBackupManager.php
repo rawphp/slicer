@@ -1,11 +1,11 @@
 <?php
 
-namespace Slicer\Contract;
+namespace Slicer\Manager\Contract;
 
 /**
  * Interface IBackupManager
  *
- * @package Slicer\Contract
+ * @package Slicer\Manager\Contract
  */
 interface IBackupManager extends IManager
 {

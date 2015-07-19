@@ -1,14 +1,16 @@
 <?php
-namespace Slicer\Contract;
+
+namespace Slicer\Manager\Contract;
 
 use Slicer\Config;
+use Slicer\Contract\ISlicerFileBuilder;
 use Slicer\Manager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class InstallationManager
  *
- * @package Slicer\Installer
+ * @package Slicer\Manager\Contract
  */
 interface IInstallationManager
 {

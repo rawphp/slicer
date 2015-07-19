@@ -1,16 +1,16 @@
 <?php
 
-namespace Slicer\Downloader;
+namespace Slicer\Manager\Downloader;
 
 use GuzzleHttp\Client;
-use Slicer\Contract\IDownloadManager;
 use Slicer\Contract\IUpdate;
-use Slicer\Manager;
+use Slicer\Manager\Contract\IDownloadManager;
+use Slicer\Manager\Manager;
 
 /**
  * Class DownloadManager
  *
- * @package Slicer\Downloader
+ * @package Slicer\Manager\Downloader
  */
 class DownloadManager extends Manager implements IDownloadManager
 {

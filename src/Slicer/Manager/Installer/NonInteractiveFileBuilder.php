@@ -1,13 +1,13 @@
 <?php
 
-namespace Slicer\Installer;
+namespace Slicer\Manager\Installer;
 
 use Slicer\Contract\ISlicerFileBuilder;
 
 /**
  * Class NonInteractiveFileBuilder
  *
- * @package Slicer\Installer
+ * @package Slicer\Manager\Installer
  */
 class NonInteractiveFileBuilder implements ISlicerFileBuilder
 {

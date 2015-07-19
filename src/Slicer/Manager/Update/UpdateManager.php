@@ -1,12 +1,10 @@
 <?php
 
-namespace Slicer\Updater;
+namespace Slicer\Manager\Update;
 
 use DateTime;
 use Exception;
-use Slicer\Contract\IDownloadManager;
 use Slicer\Contract\IUpdate;
-use Slicer\Contract\IUpdateManager;
 use Slicer\Event\OnGetChangeProviderEvent;
 use Slicer\Event\PostCreateUpdateEvent;
 use Slicer\Event\PostGetUpdatesEvent;
@@ -18,7 +16,9 @@ use Slicer\Event\PreGetUpdatesEvent;
 use Slicer\Event\PrePublishUpdateEvent;
 use Slicer\Event\PreRollbackEvent;
 use Slicer\Event\PreUpdateEvent;
-use Slicer\Manager;
+use Slicer\Manager\Contract\IDownloadManager;
+use Slicer\Manager\Contract\IUpdateManager;
+use Slicer\Manager\Manager;
 use Slicer\Provider\Contract\IChangeProvider;
 use SplFileInfo;
 use ZipArchive;
@@ -26,7 +26,7 @@ use ZipArchive;
 /**
  * Class UpdateManager
  *
- * @package Slicer\Updater
+ * @package Slicer\Manager\Update
  */
 class UpdateManager extends Manager implements IUpdateManager
 {

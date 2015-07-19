@@ -1,8 +1,8 @@
 <?php
 
-namespace Slicer\Test\Installer;
+namespace Slicer\Test\Manager\Installer;
 
-use Slicer\Installer\InteractiveFileBuilder;
+use Slicer\Manager\Installer\InteractiveFileBuilder;
 use Slicer\Provider\GitProvider;
 use Slicer\TestCase;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Class InteractiveFileBuilderTest
  *
- * @package Slicer\Test\Installer
+ * @package Slicer\Test\Manager\Installer
  */
 class InteractiveFileBuilderTest extends TestCase
 {

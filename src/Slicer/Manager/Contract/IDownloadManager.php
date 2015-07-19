@@ -1,11 +1,13 @@
 <?php
 
-namespace Slicer\Contract;
+namespace Slicer\Manager\Contract;
+
+use Slicer\Contract\IUpdate;
 
 /**
  * Interface IDownloadManager
  *
- * @package Slicer\Contract
+ * @package Slicer\Manager\Contract
  */
 interface IDownloadManager extends IManager
 {

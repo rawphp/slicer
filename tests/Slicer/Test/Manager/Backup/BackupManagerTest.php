@@ -1,21 +1,20 @@
 <?php
 
-namespace Slicer\Test\Backup;
+namespace Slicer\Test\Manager\Backup;
 
-use Slicer\Backup\BackupManager;
-use Slicer\Contract\IBackupManager;
+use Slicer\Manager\Backup\BackupManager;
 use Slicer\Event\PostBackupEvent;
 use Slicer\Event\PreBackupEvent;
+use Slicer\Manager\Contract\IBackupManager;
 use Slicer\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use ZipArchive;
 
 /**
  * Class BackupManagerTest
  *
- * @package Slicer\Test\Backup
+ * @package Slicer\Test\Manager\Backup
  */
 class BackupManagerTest extends TestCase
 {
@@ -153,7 +152,7 @@ class BackupManagerTest extends TestCase
             $this->dirHasFile( base_path( 'extracted' ), 'res' );
             $this->dirHasFile( base_path( 'extracted' ), 'src' );
             $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer' );
-            $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Backup' );
+            $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Manager/Backup' );
             $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Command' );
             $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Command/BackupCommand.php' );
             $this->dirHasFile( base_path( 'extracted' ), 'tests' );

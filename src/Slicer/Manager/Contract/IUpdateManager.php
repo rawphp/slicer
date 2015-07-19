@@ -1,13 +1,14 @@
 <?php
 
-namespace Slicer\Contract;
+namespace Slicer\Manager\Contract;
 
+use Slicer\Contract\IUpdate;
 use Slicer\Provider\Contract\IChangeProvider;
 
 /**
  * Interface IUpdateManager
  *
- * @package Slicer\Contract
+ * @package Slicer\Manager\Contract
  */
 interface IUpdateManager extends IManager
 {

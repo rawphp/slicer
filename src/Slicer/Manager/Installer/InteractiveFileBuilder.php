@@ -1,6 +1,6 @@
 <?php
 
-namespace Slicer\Installer;
+namespace Slicer\Manager\Installer;
 
 use Symfony\Component\Console\Helper\HelperInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Class InteractiveFileBuilder
  *
- * @package Slicer\Installer
+ * @package Slicer\Manager\Installer
  */
 class InteractiveFileBuilder extends NonInteractiveFileBuilder
 {

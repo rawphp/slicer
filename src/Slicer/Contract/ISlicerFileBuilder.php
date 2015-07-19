@@ -2,8 +2,6 @@
 
 namespace Slicer\Contract;
 
-use Symfony\Component\Console\Output\OutputInterface;
-
 /**
  * Interface ISlicerFileBuilder
  *

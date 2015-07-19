@@ -2,11 +2,11 @@
 
 namespace Slicer;
 
-use Slicer\Backup\BackupManager;
-use Slicer\Downloader\DownloadManager;
-use Slicer\Installer\InstallationManager;
+use Slicer\Manager\Backup\BackupManager;
+use Slicer\Manager\Downloader\DownloadManager;
+use Slicer\Manager\Installer\InstallationManager;
 use RuntimeException;
-use Slicer\Updater\UpdateManager;
+use Slicer\Manager\Update\UpdateManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**

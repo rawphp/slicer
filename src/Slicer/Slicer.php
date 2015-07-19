@@ -2,16 +2,16 @@
 
 namespace Slicer;
 
-use Slicer\Contract\IBackupManager;
-use Slicer\Contract\IDownloadManager;
-use Slicer\Contract\IInstallationManager;
-use Slicer\Contract\IUpdateManager;
+use Slicer\Manager\Contract\IBackupManager;
+use Slicer\Manager\Contract\IDownloadManager;
+use Slicer\Manager\Contract\IInstallationManager;
+use Slicer\Manager\Contract\IUpdateManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class Slicer
  *
- * @package RawPHP\Slicer
+ * @package Slicer
  */
 class Slicer
 {

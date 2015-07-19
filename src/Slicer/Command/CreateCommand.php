@@ -64,7 +64,7 @@ class CreateCommand extends Command
 
         if ( NULL === $this->updateManager->getChangeProvider() && !$input->hasArgument( 'provider' ) )
         {
-            throw new InvalidArgumentException( 'Change Provider must be specified either in Slicer.json or as an argument' );
+            throw new InvalidArgumentException( 'Change Provider must be specified either in slicer.json or as an argument' );
         }
 
         if ( $input->hasArgument( 'provider' ) )

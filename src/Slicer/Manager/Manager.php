@@ -1,14 +1,15 @@
 <?php
 
-namespace Slicer;
+namespace Slicer\Manager;
 
-use Slicer\Contract\IManager;
+use Slicer\Config;
+use Slicer\Manager\Contract\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class Manager
  *
- * @package Slicer
+ * @package Slicer\Manager
  */
 abstract class Manager implements IManager
 {

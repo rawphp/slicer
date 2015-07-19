@@ -1,6 +1,6 @@
 <?php
 
-namespace Slicer\Contract;
+namespace Slicer\Manager\Contract;
 
 use Slicer\Config;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * Interface IManager
  *
- * @package Slicer\Contract
+ * @package Slicer\Manager\Contract
  */
 interface IManager
 {

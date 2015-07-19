@@ -1,19 +1,19 @@
 <?php
 
-namespace Slicer\Installer;
+namespace Slicer\Manager\Installer;
 
 use Exception;
 use InvalidArgumentException;
-use Slicer\Contract\IInstallationManager;
 use Slicer\Contract\ISlicerFileBuilder;
 use Slicer\Event\PostInstallEvent;
 use Slicer\Event\PreInstallEvent;
-use Slicer\Manager;
+use Slicer\Manager\Contract\IInstallationManager;
+use Slicer\Manager\Manager;
 
 /**
  * Class InstallationManager
  *
- * @package Slicer\Installer
+ * @package Slicer\Manager\Installer
  */
 class InstallationManager extends Manager implements IInstallationManager
 {
