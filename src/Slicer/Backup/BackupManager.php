@@ -4,6 +4,8 @@ namespace Slicer\Backup;
 
 use Exception;
 use Slicer\Contract\IBackupManager;
+use Slicer\Event\PostBackupEvent;
+use Slicer\Event\PreBackupEvent;
 use Slicer\Manager;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -27,13 +29,18 @@ class BackupManager extends Manager implements IBackupManager
     {
         $options = array_merge_recursive( $options, $this->config->getOptions() );
 
-        print_r( $options );
+        $this->event->dispatch( PreBackupEvent::class, new PreBackupEvent( $options ) );
+
+        if ( $options[ 'output' ][ 'debug' ] )
+        {
+            print_r( $options );
+        }
 
         try
         {
-            if ( file_exists( $options[ 'file' ] ) )
+            if ( file_exists( $options[ 'backup-file' ] ) )
             {
-                unlink( $options[ 'file' ] );
+                unlink( $options[ 'backup-file' ] );
             }
 
             $finder = new Finder();
@@ -44,20 +51,29 @@ class BackupManager extends Manager implements IBackupManager
                 ->in( $this->config->getBaseDir() );
 
             $archive = new ZipArchive();
-            $file    = $options[ 'file' ];
-            $archive->open( $file, ZipArchive::CREATE );
 
-            foreach ( $finder as $file )
+            $status = $archive->open( $options[ 'backup-file' ], ZipArchive::CREATE );
+
+            if ( TRUE === $status )
             {
-                $this->addFile( $archive, $file );
-            }
+                foreach ( $finder as $file )
+                {
+                    $this->addFile( $archive, $file );
+                }
 
-            $archive->close();
+                $archive->close();
+            }
+            else
+            {
+                return $status;
+            }
         }
         catch ( Exception $e )
         {
             return $e;
         }
+
+        $this->event->dispatch( PostBackupEvent::class, new PostBackupEvent( $options[ 'backup-file' ], $options ) );
 
         return TRUE;
     }

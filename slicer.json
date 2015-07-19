@@ -29,7 +29,11 @@
     }
   },
   "backup": {
-    "exclude-dirs": [ "cache", "fake" ]
+    "exclude-dirs": [
+      "cache",
+      "fake"
+    ],
+    "file-type": "single"
   },
   "base_dir": ""
 }

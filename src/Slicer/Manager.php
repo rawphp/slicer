@@ -2,15 +2,20 @@
 
 namespace Slicer;
 
+use Slicer\Contract\IManager;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 /**
  * Class Manager
  *
  * @package Slicer
  */
-abstract class Manager
+abstract class Manager implements IManager
 {
     /** @var  array */
     protected $config;
+    /** @var  EventDispatcher */
+    protected $event;
 
     /**
      * Create new manager.
@@ -42,6 +47,30 @@ abstract class Manager
     public function setConfig( Config $config )
     {
         $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * Get event dispatcher.
+     *
+     * @return EventDispatcher
+     */
+    public function getEventDispatcher()
+    {
+        return $this->event;
+    }
+
+    /**
+     * Set event dispatcher.
+     *
+     * @param EventDispatcher $event
+     *
+     * @return Manager
+     */
+    public function setEventDispatcher( EventDispatcher $event )
+    {
+        $this->event = $event;
 
         return $this;
     }

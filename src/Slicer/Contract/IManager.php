@@ -3,6 +3,7 @@
 namespace Slicer\Contract;
 
 use Slicer\Config;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Interface IManager
@@ -26,4 +27,20 @@ interface IManager
      * @return Manager
      */
     public function setConfig( Config $config );
+
+    /**
+     * Get event dispatcher.
+     *
+     * @return EventDispatcher
+     */
+    public function getEventDispatcher();
+
+    /**
+     * Set event dispatcher.
+     *
+     * @param EventDispatcher $event
+     *
+     * @return Manager
+     */
+    public function setEventDispatcher( EventDispatcher $event );
 }

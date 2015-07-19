@@ -42,10 +42,14 @@ class Slicer
 
     /**
      * @param DownloadManager $downloadManager
+     *
+     * @return Slicer
      */
-    public function setDownloadManager( $downloadManager )
+    public function setDownloadManager( DownloadManager $downloadManager )
     {
         $this->downloadManager = $downloadManager;
+
+        return $this;
     }
 
     /**
@@ -58,10 +62,14 @@ class Slicer
 
     /**
      * @param InstallationManager $installationManager
+     *
+     * @return Slicer
      */
-    public function setInstallationManager( $installationManager )
+    public function setInstallationManager( InstallationManager $installationManager )
     {
         $this->installationManager = $installationManager;
+
+        return $this;
     }
 
     /**
@@ -74,10 +82,14 @@ class Slicer
 
     /**
      * @param Config $config
+     *
+     * @return Slicer
      */
-    public function setConfig( $config )
+    public function setConfig( Config $config )
     {
         $this->config = $config;
+
+        return $this;
     }
 
     /**
@@ -90,10 +102,14 @@ class Slicer
 
     /**
      * @param EventDispatcher $eventDispatcher
+     *
+     * @return Slicer
      */
-    public function setEventDispatcher( $eventDispatcher )
+    public function setEventDispatcher( EventDispatcher $eventDispatcher )
     {
         $this->eventDispatcher = $eventDispatcher;
+
+        return $this;
     }
 
     /**
@@ -106,10 +122,14 @@ class Slicer
 
     /**
      * @param IUpdateManager $updateManager
+     *
+     * @return Slicer
      */
-    public function setUpdateManager( $updateManager )
+    public function setUpdateManager( IUpdateManager $updateManager )
     {
         $this->updateManager = $updateManager;
+
+        return $this;
     }
 
     /**
@@ -122,9 +142,13 @@ class Slicer
 
     /**
      * @param IBackupManager $backupManager
+     *
+     * @return Slicer
      */
-    public function setBackupManager( $backupManager )
+    public function setBackupManager( IBackupManager $backupManager )
     {
         $this->backupManager = $backupManager;
+
+        return $this;
     }
 }

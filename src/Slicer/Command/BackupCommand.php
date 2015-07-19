@@ -2,6 +2,7 @@
 
 namespace Slicer\Command;
 
+use DateTime;
 use Exception;
 use Slicer\Contract\IBackupManager;
 use Slicer\Service;
@@ -50,11 +51,31 @@ class BackupCommand extends Command
     {
         $this->backupManager = $this->getApplication()->getSlicer()->getBackupManager();
 
+        $config = $this->backupManager->getConfig();
+
+        $date = new DateTime();
+
+        switch ( $config->getOptions()[ 'file-type' ] )
+        {
+            case 'daily':
+                $fileName = '/backup-' . $date->format( 'Ymd' ) . '.zip';
+                break;
+            case 'unique':
+                $fileName = '/backup-' . $date->format( 'Ymdhms' ) . '.zip';
+                break;
+            case 'single':
+            default:
+                $fileName = '/backup.zip';
+                break;
+        }
+
+        $file = $this->backupManager->getConfig()->getCacheDir() . $fileName;
+
         $status = $this->backupManager->backup(
             [
-                'file'   => $this->backupManager->getConfig()->getCacheDir() . '/backup.zip',
-                'type'   => $input->hasOption( 'full' ) ? 'full' : 'restore',
-                'output' =>
+                'backup-file' => $file,
+                'backup-type' => $input->hasOption( 'full' ) ? 'full' : 'restore',
+                'output'      =>
                     [
                         'debug'   => $input->hasOption( 'debug' ) ? $input->getOption( 'debug' ) : FALSE,
                         'quiet'   => $input->hasOption( 'quiet' ),

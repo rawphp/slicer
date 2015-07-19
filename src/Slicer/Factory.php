@@ -16,6 +16,9 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class Factory
 {
+    /** @var  Slicer */
+    private static $instance;
+
     /**
      * Get Slicer Home Directory.
      *
@@ -153,12 +156,19 @@ class Factory
 
         $slicer = new Slicer();
         $slicer->setConfig( $config );
-
         $slicer->setEventDispatcher( new EventDispatcher() );
+
+        $slicer->setEventDispatcher( $slicer->getEventDispatcher() );
+
         $slicer->setUpdateManager( new UpdateManager( $config ) );
         $slicer->setDownloadManager( new DownloadManager( $config ) );
         $slicer->setBackupManager( new BackupManager( $config ) );
         $slicer->setInstallationManager( new InstallationManager( $config ) );
+
+        $slicer->getUpdateManager()->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getDownloadManager()->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getBackupManager()->setEventDispatcher( $slicer->getEventDispatcher() );
+        $slicer->getInstallationManager()->setEventDispatcher( $slicer->getEventDispatcher() );
 
         return $slicer;
     }
@@ -172,6 +182,11 @@ class Factory
     {
         $factory = new static();
 
-        return $factory->createSlicer();
+        if ( NULL === Factory::$instance )
+        {
+            Factory::$instance = $factory->createSlicer();
+        }
+
+        return Factory::$instance;
     }
 }

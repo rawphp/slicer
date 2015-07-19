@@ -10,10 +10,10 @@
          stopOnFailure="false"
          syntaxCheck="false"
          bootstrap="tests/bootstrap.php"
->
+        >
     <testsuites>
-        <testsuite name="Composer Test Suite">
-            <directory>./tests/Slicer/</directory>
+        <testsuite name="Slider Test Suite">
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
@@ -25,9 +25,8 @@
 
     <filter>
         <whitelist>
-            <directory>./src/Composer/</directory>
+            <directory>./src/</directory>
             <exclude>
-                <file>./src/Composer/Autoload/ClassLoader.php</file>
             </exclude>
         </whitelist>
     </filter>
