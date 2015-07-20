@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
 namespace Slicer\Console;
 
 use Exception;
@@ -11,6 +23,7 @@ use Slicer\Command\CreateCommand;
 use Slicer\Command\PullUpdateCommand;
 use Slicer\Command\PushUpdateCommand;
 use Slicer\Command\UpdateCommand;
+use Slicer\Exception\NoBaseDirectoryException;
 use Slicer\Factory;
 use Slicer\Slicer;
 use RuntimeException;
@@ -50,6 +63,63 @@ class Application extends BaseApplication
         }
 
         parent::__construct( 'Slicer', Slicer::VERSION );
+
+        $this->init();
+    }
+
+    /**
+     * Initialise the application.
+     */
+    protected function init()
+    {
+        $dirs = [
+            'slicer_dir'  => base_path( 'slicer' ),
+            'tmp_dir'     => base_path( 'slicer/tmp' ),
+            'updates_dir' => base_path( 'slicer/updates' ),
+            'backup_dir'  => base_path( 'slicer/backup' ),
+        ];
+
+        $this->slicer = Factory::create();
+
+        if ( '' !== $this->slicer->getConfig()->getSlicerDir() )
+        {
+            $dir[ 'slicer_dir' ] = $this->slicer->getConfig()->getSlicerDir();
+        }
+
+        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'source' ][ 'tmp-dir' ] )
+        {
+            $dirs[ 'tmp_dir' ] = $this->slicer->getConfig()->getStorage()[ 'source' ][ 'tmp-dir' ];
+        }
+
+        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'destination' ][ 'update-dir' ] )
+        {
+            $dirs[ 'updates_dir' ] = $this->slicer->getConfig()->getStorage()[ 'destination' ][ 'update-dir' ];
+        }
+
+        if ( '' !== $this->slicer->getConfig()->getBackup()[ 'location' ] )
+        {
+            $dirs[ 'backup_dir' ] = $this->slicer->getConfig()->getBackup()[ 'location' ];
+        }
+
+        foreach ( $dirs as $dir )
+        {
+
+            if ( !is_writable( dirname( $dir ) ) )
+            {
+                echo "'$dir' is not writable";
+
+                exit( 1 );
+            }
+
+            if ( !is_readable( dirname( $dir ) ) )
+            {
+                echo "'$dir' is not readable";
+
+                exit( 1 );
+            }
+
+            @mkdir( $dir, 0777, TRUE );
+        }
     }
 
     /**

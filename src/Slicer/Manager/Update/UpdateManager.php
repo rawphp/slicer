@@ -1,10 +1,23 @@
 <?php
 
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
 namespace Slicer\Manager\Update;
 
 use DateTime;
 use Exception;
 use Phar;
+use Seld\PharUtils\Timestamps;
 use Slicer\Contract\IUpdate;
 use Slicer\Event\OnGetChangeProviderEvent;
 use Slicer\Event\PostCreateUpdateEvent;
@@ -225,7 +238,7 @@ class UpdateManager extends Manager implements IUpdateManager
                 unlink( $pharFile );
             }
 
-            $phar = new Phar( $pharFile, 0, 'update.phar' );
+            $phar = new Phar( $pharFile, 0, 'Update.phar' );
             $phar->setSignatureAlgorithm( Phar::SHA1 );
 
             $phar->startBuffering();
@@ -241,17 +254,18 @@ class UpdateManager extends Manager implements IUpdateManager
             $phar->addFromString( $path, $content );
 
             // Add update bin script
-            $updateFile = new SplFileInfo( base_path( 'res/update' ) );
-            $path       = 'bin/update';
-            $path       = strtr( $path, '\\', '/' );
-            $content    = file_get_contents( $updateFile->getRealPath() );
-            $phar->addFromString( $path, $content );
+            $this->addUpdateBin( $phar );
 
             // Generate a Stub
             $stub = $this->generateUpdateStub( $pharFile );
             $phar->setStub( $stub );
 
             $phar->stopBuffering();
+
+            // re-sign the phar with reproducible timestamp / signature
+            $util = new Timestamps( $pharFile );
+            $util->updateTimestamps( ( new DateTime() )->format( 'U' ) );
+            $util->save( $pharFile, Phar::SHA1 );
 
             return TRUE;
         }
@@ -261,6 +275,19 @@ class UpdateManager extends Manager implements IUpdateManager
         }
 
         return FALSE;
+    }
+
+    /**
+     * Add Update Center Bin contents.
+     *
+     * @param Phar $phar
+     */
+    private function addUpdateBin( Phar $phar )
+    {
+        $content = file_get_contents( base_path( 'res/update' ) );
+        $content = preg_replace( '{^#!/usr/bin/env php\s*}', '', $content );
+
+        $phar->addFromString( 'bin/update', $content );
     }
 
     /**

@@ -6,7 +6,7 @@ if ( 'cli' !== PHP_SAPI )
     echo 'Warning: Slicer Update should be invoked via the CLI version of PHP, not the ' . PHP_SAPI . ' SAPI' . PHP_EOL;
 }
 
-require __DIR__ . '/vendor/autoload.php';
+//require __DIR__ . '/vendor/autoload.php';
 
 use Slicer\Contract\IUpdate;
 
@@ -46,18 +46,21 @@ if ( function_exists( 'ini_set' ) )
     unset( $memoryInBytes, $memoryLimit );
 }
 
-try
-{
-    /** @var IUpdate $update */
-    $update = new Slicer\Update();
+die( 'Update Running - Exiting...' );
+?>
 
-    $update->updateFiles();
-    $update->deleteFiles();
-    $update->updateDatabase();
-}
-catch ( Exception $e )
-{
-    $update->rollbackDatabaseChanges();
-    $update->rollbackDeleteFiles();
-    $update->rollbackUpdateFiles();
-}
+//try
+//{
+//    /** @var IUpdate $update */
+//    $update = new Slicer\Update();
+//
+//    $update->updateFiles();
+//    $update->deleteFiles();
+//    $update->updateDatabase();
+//}
+//catch ( Exception $e )
+//{
+//    $update->rollbackDatabaseChanges();
+//    $update->rollbackDeleteFiles();
+//    $update->rollbackUpdateFiles();
+//}

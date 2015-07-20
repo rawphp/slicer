@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
 namespace Slicer;
 
 /**
@@ -35,6 +47,8 @@ class Config
     protected $signing;
     /** @var  array */
     protected $storage;
+    /** @var  array */
+    protected $backup;
 
     /**
      * Create a new config.
@@ -102,7 +116,7 @@ class Config
                     $this->storage = $value;
                     break;
                 case 'backup':
-                    $this->options = array_merge_recursive( $this->options, $value );
+                    $this->backup = $value;
                     break;
             }
         }
@@ -119,6 +133,8 @@ class Config
     }
 
     /**
+     * Get app name.
+     *
      * @return string
      */
     public function getAppName()
@@ -127,6 +143,8 @@ class Config
     }
 
     /**
+     * Set app name.
+     *
      * @param string $appName
      *
      * @return Config
@@ -139,6 +157,8 @@ class Config
     }
 
     /**
+     * Get description.
+     *
      * @return string
      */
     public function getDescription()
@@ -147,6 +167,8 @@ class Config
     }
 
     /**
+     * Set description.
+     *
      * @param string $description
      *
      * @return Config
@@ -159,6 +181,8 @@ class Config
     }
 
     /**
+     * Get app key.
+     *
      * @return string
      */
     public function getAppKey()
@@ -167,6 +191,8 @@ class Config
     }
 
     /**
+     * Set app key.
+     *
      * @param string $appKey
      *
      * @return Config
@@ -179,6 +205,8 @@ class Config
     }
 
     /**
+     * Get app secret.
+     *
      * @return string
      */
     public function getAppSecret()
@@ -187,6 +215,8 @@ class Config
     }
 
     /**
+     * Set app secret.
+     *
      * @param string $appSecret
      *
      * @return Config
@@ -199,6 +229,8 @@ class Config
     }
 
     /**
+     * Get base directory.
+     *
      * @return string
      */
     public function getBaseDir()
@@ -207,6 +239,8 @@ class Config
     }
 
     /**
+     * Set base directory.
+     *
      * @param string $baseDir
      *
      * @return Config
@@ -219,6 +253,8 @@ class Config
     }
 
     /**
+     * Get slicer directory.
+     *
      * @return string
      */
     public function getSlicerDir()
@@ -227,6 +263,8 @@ class Config
     }
 
     /**
+     * Set slicer directory.
+     *
      * @param string $slicerDir
      *
      * @return Config
@@ -239,6 +277,8 @@ class Config
     }
 
     /**
+     * Get cache directory.
+     *
      * @return string
      */
     public function getCacheDir()
@@ -247,6 +287,8 @@ class Config
     }
 
     /**
+     * Set cache directory.
+     *
      * @param string $cacheDir
      *
      * @return Config
@@ -259,6 +301,8 @@ class Config
     }
 
     /**
+     * Get options.
+     *
      * @return array
      */
     public function getOptions()
@@ -267,11 +311,13 @@ class Config
     }
 
     /**
+     * Set options.
+     *
      * @param array $options
      *
      * @return Config
      */
-    public function setOptions( $options )
+    public function setOptions( array $options )
     {
         $this->options = $options;
 
@@ -279,6 +325,8 @@ class Config
     }
 
     /**
+     * Get update file.
+     *
      * @return string
      */
     public function getUpdateFile()
@@ -287,6 +335,8 @@ class Config
     }
 
     /**
+     * Set update file.
+     *
      * @param string $updateFile
      *
      * @return Config
@@ -323,26 +373,8 @@ class Config
     }
 
     /**
-     * @return array
-     */
-    public function getChangeProvider()
-    {
-        return $this->changeProvider;
-    }
-
-    /**
-     * @param array $changeProvider
+     * Get signing.
      *
-     * @return Config
-     */
-    public function setChangeProvider( $changeProvider )
-    {
-        $this->changeProvider = $changeProvider;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function getSigning()
@@ -351,11 +383,13 @@ class Config
     }
 
     /**
+     * Set signing.
+     *
      * @param array $signing
      *
      * @return Config
      */
-    public function setSigning( $signing )
+    public function setSigning( array $signing )
     {
         $this->signing = $signing;
 
@@ -363,6 +397,8 @@ class Config
     }
 
     /**
+     * Get storage.
+     *
      * @return array
      */
     public function getStorage()
@@ -371,14 +407,56 @@ class Config
     }
 
     /**
+     * Set storage.
+     *
      * @param array $storage
      *
      * @return Config
      */
-    public function setStorage( $storage )
+    public function setStorage( array $storage )
     {
         $this->storage = $storage;
 
         return $this;
+    }
+
+    /**
+     * Get backup.
+     *
+     * @return array
+     */
+    public function getBackup()
+    {
+        return $this->backup;
+    }
+
+    /**
+     * Set backup.
+     *
+     * @param array $backup
+     */
+    public function setBackup( array $backup )
+    {
+        $this->backup = $backup;
+    }
+
+    /**
+     * Get change provider settings.
+     *
+     * @return array
+     */
+    public function getChangeProvider()
+    {
+        return $this->changeProvider;
+    }
+
+    /**
+     * Set change provider settings.
+     *
+     * @param array $changeProvider
+     */
+    public function setChangeProvider( array $changeProvider )
+    {
+        $this->changeProvider = $changeProvider;
     }
 }

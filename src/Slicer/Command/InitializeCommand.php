@@ -1,17 +1,28 @@
 <?php
 
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
 namespace Slicer\Command;
 
-use Slicer\Contract\IInstallationManager;
-use Slicer\Installer\InteractiveFileBuilder;
-use Slicer\Installer\NonInteractiveFileBuilder;
+use Slicer\Manager\Contract\IInstallationManager;
+use Slicer\Manager\Installer\InteractiveFileBuilder;
+use Slicer\Manager\Installer\NonInteractiveFileBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Class InitializeCommand
@@ -60,7 +71,7 @@ class InitializeCommand extends Command
 
             if ( FALSE === $helper->ask( $input, $output, $question ) )
             {
-                $output->writeln( '<comment>Initialization cancelled</comment>' );
+                $output->writeln( '<error>Command aborted</error>' );
 
                 return 0;
             }
@@ -77,7 +88,13 @@ class InitializeCommand extends Command
 
         $result = $this->installationManager->install();
 
-        if ( TRUE === $result )
+        if ( 0 === $result )
+        {
+            $output->writeln( '<error>Command aborted</error>' );
+
+            return 0;
+        }
+        elseif ( TRUE === $result )
         {
             $output->writeln( 'Slicer initialized successfully to <info>' . base_path( 'slicer.json' ) . '</info>' );
 

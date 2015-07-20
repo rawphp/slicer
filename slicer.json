@@ -32,6 +32,7 @@
     }
   },
   "backup": {
+    "location": "slicer/backup",
     "exclude-dirs": [
       "cache",
       "fake"

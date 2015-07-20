@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
 namespace Slicer\Manager\Installer;
 
 use Symfony\Component\Console\Helper\HelperInterface;
@@ -62,7 +74,7 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
 
         echo $file . PHP_EOL . PHP_EOL;
 
-        $confirm = new ConfirmationQuestion( '<question>How does this look? Continue creating the file?</question> ', TRUE );
+        $confirm = new ConfirmationQuestion( 'How does this look? Continue creating the file? [<comment>yes</comment>] ', TRUE );
 
         if ( TRUE === $this->helper->ask( $this->input, $this->output, $confirm ) )
         {
@@ -81,18 +93,21 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
     {
         return
             [
-                'app-name'        => new Question( 'Enter the name of this project: ', 'slicer/slicer' ),
-                'app-description' => new Question( 'Enter the description: ', '' ),
-                'app-key'         => new Question( 'Enter the Application Key: ', '' ),
-                'app-secret'      => new Question( 'Enter the Application Secret: ', '' ),
-                'backup-files'    => new ConfirmationQuestion( 'Do you want to backup all files BEFORE running updates? ', TRUE ),
-                'backup-database' => new ConfirmationQuestion( 'Do you want to backup database BEFORE running updates? ', TRUE ),
-                'update-class'    => new Question( 'What Update class do you want to use as base? ', 'Slicer\\Update' ),
-                'change-provider' => new ChoiceQuestion( 'What change provider do you want to use? ', [ 'Git', 'Null' ], 'Git' ),
-                'private-key'     => new Question( 'Provide the path to your private signing key: ', '' ),
-                'public-key'      => new Question( 'Provide the path to your public signing key: ', '' ),
-                'backup-type'     => new ChoiceQuestion( 'What type of backup file do you want to use? ', [ 'single', 'unique' ], 'single' ),
-                'backup-ignore'   => new Question( 'Provide a comma-delimited list of directories to ignore during backups: ', '' ),
+                'app-name'         => new Question( 'Enter the name of this project: [<comment>slicer/slicer</comment>]', 'slicer/slicer' ),
+                'app-description'  => new Question( 'Enter the description: []', '' ),
+                'app-key'          => new Question( 'Enter the Application Key: []', '' ),
+                'app-secret'       => new Question( 'Enter the Application Secret: []', '' ),
+                'backup-files'     => new ConfirmationQuestion( 'Do you want to backup all files BEFORE running updates? [<comment>yes</comment>]', TRUE ),
+                'backup-database'  => new ConfirmationQuestion( 'Do you want to backup database BEFORE running updates?  [<comment>yes</comment>]', TRUE ),
+                'update-class'     => new Question( 'What Update class do you want to use as base? [<comment>Slicer\\Update</comment>]', 'Slicer\\Update' ),
+                'update-namespace' => new Question( 'What Update namespace do you want to use? [<comment>Slicer\\Update</comment>]', 'Slicer\\Update' ),
+                'change-provider'  => new ChoiceQuestion( 'What change provider do you want to use?  [<comment>Git</comment>]', [ 'Git', 'Null' ], 'Git' ),
+                'private-key'      => new Question( 'Provide the path to your private signing key: []', '' ),
+                'public-key'       => new Question( 'Provide the path to your public signing key: []', '' ),
+                'backup-dir'       => new Question( 'Provide the path to the backup directory: [<comment>slicer/backup</comment>]', 'slicer/backup' ),
+                'backup-type'      => new ChoiceQuestion( 'What type of backup file do you want to use? [<comment>single</comment>]', [ 'single', 'unique' ], 'single' ),
+                'backup-ignore'    => new Question( 'Provide a comma-delimited list of directories to ignore during backups: []', '' ),
+
             ];
     }
 
@@ -143,7 +158,11 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
                                     'backup-database' => $data[ 'backup-database' ],
                                 ],
                         ],
-                    'update_file'     => $data[ 'update-class' ],
+                    'update_file'     =>
+                        [
+                            'class'     => $data[ 'update-class' ],
+                            'namespace' => $data[ 'update-namespace' ],
+                        ],
                     'change_provider' =>
                         [
                             'driver' => $data[ 'change-provider' ],
@@ -167,6 +186,7 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
                         ],
                     'backup'          =>
                         [
+                            'location'     => $data[ 'backup-dir' ],
                             'exclude-dirs' => explode( ',', $data[ 'backup-ignore' ] ),
                             'file-type'    => $data[ 'backup-type' ],
                         ],

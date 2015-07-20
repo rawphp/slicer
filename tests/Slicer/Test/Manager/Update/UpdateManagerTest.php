@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
 namespace Slicer\Test\Manager\Update;
 
 use Phar;
@@ -8,7 +20,6 @@ use Slicer\Manager\Update\UpdateManager;
 use Slicer\Provider\GitProvider;
 use Slicer\TestCase;
 use SplFileInfo;
-use SplFileObject;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
@@ -165,10 +176,7 @@ class UpdateManagerTest extends TestCase
         $this->assertTrue( file_exists( base_path( 'extracted/res/files.zip' ) ) );
         $this->assertTrue( file_exists( base_path( 'extracted/Update.php' ) ) );
 
-        $this->assertTrue( $phar->isExecutable() );
-
         unset( $phar );
-
     }
 
     /**
