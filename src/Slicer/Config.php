@@ -26,7 +26,9 @@ class Config
     /** @var  array */
     protected $options = [ ];
     /** @var  string */
-    protected $updateFile = 'Slicer\\Update';
+    protected $updateFile = 'Slicer\\Update\\Update';
+    /** @var  string */
+    protected $updateNamespace = 'Slicer\\Update';
     /** @var  array */
     protected $changeProvider;
     /** @var  array */
@@ -87,7 +89,8 @@ class Config
                     $this->options = array_merge_recursive( $this->options, $value );
                     break;
                 case 'update_file':
-                    $this->updateFile = $value;
+                    $this->updateFile      = $value[ 'class' ];
+                    $this->updateNamespace = $value[ 'namespace' ];
                     break;
                 case 'change_provider':
                     $this->changeProvider = $value;
@@ -125,10 +128,14 @@ class Config
 
     /**
      * @param string $appName
+     *
+     * @return Config
      */
     public function setAppName( $appName )
     {
         $this->appName = $appName;
+
+        return $this;
     }
 
     /**
@@ -141,10 +148,14 @@ class Config
 
     /**
      * @param string $description
+     *
+     * @return Config
      */
     public function setDescription( $description )
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -157,10 +168,14 @@ class Config
 
     /**
      * @param string $appKey
+     *
+     * @return Config
      */
     public function setAppKey( $appKey )
     {
         $this->appKey = $appKey;
+
+        return $this;
     }
 
     /**
@@ -173,10 +188,14 @@ class Config
 
     /**
      * @param string $appSecret
+     *
+     * @return Config
      */
     public function setAppSecret( $appSecret )
     {
         $this->appSecret = $appSecret;
+
+        return $this;
     }
 
     /**
@@ -189,10 +208,14 @@ class Config
 
     /**
      * @param string $baseDir
+     *
+     * @return Config
      */
     public function setBaseDir( $baseDir )
     {
         $this->baseDir = $baseDir;
+
+        return $this;
     }
 
     /**
@@ -205,10 +228,14 @@ class Config
 
     /**
      * @param string $slicerDir
+     *
+     * @return Config
      */
     public function setSlicerDir( $slicerDir )
     {
         $this->slicerDir = $slicerDir;
+
+        return $this;
     }
 
     /**
@@ -221,10 +248,14 @@ class Config
 
     /**
      * @param string $cacheDir
+     *
+     * @return Config
      */
     public function setCacheDir( $cacheDir )
     {
         $this->cacheDir = $cacheDir;
+
+        return $this;
     }
 
     /**
@@ -237,10 +268,14 @@ class Config
 
     /**
      * @param array $options
+     *
+     * @return Config
      */
     public function setOptions( $options )
     {
         $this->options = $options;
+
+        return $this;
     }
 
     /**
@@ -253,10 +288,38 @@ class Config
 
     /**
      * @param string $updateFile
+     *
+     * @return Config
      */
     public function setUpdateFile( $updateFile )
     {
         $this->updateFile = $updateFile;
+
+        return $this;
+    }
+
+    /**
+     * Get update namespace.
+     *
+     * @return string
+     */
+    public function getUpdateNamespace()
+    {
+        return $this->updateNamespace;
+    }
+
+    /**
+     * Set update namespace.
+     *
+     * @param $namespace
+     *
+     * @return Config
+     */
+    public function setUpdateNamespace( $namespace )
+    {
+        $this->updateNamespace = $namespace;
+
+        return $this;
     }
 
     /**
@@ -269,10 +332,14 @@ class Config
 
     /**
      * @param array $changeProvider
+     *
+     * @return Config
      */
     public function setChangeProvider( $changeProvider )
     {
         $this->changeProvider = $changeProvider;
+
+        return $this;
     }
 
     /**
@@ -285,10 +352,14 @@ class Config
 
     /**
      * @param array $signing
+     *
+     * @return Config
      */
     public function setSigning( $signing )
     {
         $this->signing = $signing;
+
+        return $this;
     }
 
     /**
@@ -301,9 +372,13 @@ class Config
 
     /**
      * @param array $storage
+     *
+     * @return Config
      */
     public function setStorage( $storage )
     {
         $this->storage = $storage;
+
+        return $this;
     }
 }

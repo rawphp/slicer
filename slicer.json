@@ -11,7 +11,10 @@
       "backup-database": true
     }
   },
-  "update_file": "Slicer\\Update",
+  "update_file": {
+    "class": "Slicer\\Update",
+    "namespace": "Slicer\\Update"
+  },
   "change_provider": {
     "driver": "Git",
     "class": "Slicer\\Provider\\GitProvider"

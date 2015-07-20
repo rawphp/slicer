@@ -1,0 +1,15 @@
+<?php
+
+namespace {namespace};
+
+use Slicer\Update;
+use Exception;
+use Log;
+
+/**
+ * Class Update
+ *
+ * @package {namespace}
+ */
+class {class_name} extends Update
+{

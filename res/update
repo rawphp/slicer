@@ -3,17 +3,12 @@
 
 if ( 'cli' !== PHP_SAPI )
 {
-    echo 'Warning: Slicer should be invoked via the CLI version of PHP, not the ' . PHP_SAPI . ' SAPI' . PHP_EOL;
+    echo 'Warning: Slicer Update should be invoked via the CLI version of PHP, not the ' . PHP_SAPI . ' SAPI' . PHP_EOL;
 }
 
-require __DIR__ . '/../src/bootstrap.php';
+require __DIR__ . '/vendor/autoload.php';
 
-use Slicer\Console\Application;
-
-error_reporting( -1 );
-
-putenv( 'SLICER_HOME=' . __DIR__ );
-putenv( 'SLICER=' . base_path( 'slicer.json' ) );
+use Slicer\Contract\IUpdate;
 
 if ( function_exists( 'ini_set' ) )
 {
@@ -51,6 +46,18 @@ if ( function_exists( 'ini_set' ) )
     unset( $memoryInBytes, $memoryLimit );
 }
 
-// run the command application
-$app = new Application();
-$app->run();
+try
+{
+    /** @var IUpdate $update */
+    $update = new Slicer\Update();
+
+    $update->updateFiles();
+    $update->deleteFiles();
+    $update->updateDatabase();
+}
+catch ( Exception $e )
+{
+    $update->rollbackDatabaseChanges();
+    $update->rollbackDeleteFiles();
+    $update->rollbackUpdateFiles();
+}

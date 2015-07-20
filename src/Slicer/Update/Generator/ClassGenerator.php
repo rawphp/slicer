@@ -1,11 +1,11 @@
 <?php
 
-namespace Slicer\Generator;
+namespace Slicer\Update\Generator;
 
 /**
  * Class ClassGenerator
  *
- * @package Slicer\Generator
+ * @package Slicer\Update\Generator
  */
 class ClassGenerator
 {
@@ -82,6 +82,66 @@ class ClassGenerator
         $text .= '        {' . PHP_EOL;
         $text .= '            Log::error( $e );' . PHP_EOL;
         $text .= '        }' . PHP_EOL;
+        $text .= '    }' . PHP_EOL;
+
+        return $text;
+    }
+
+    public static function generateUpdateDatabaseMethod()
+    {
+        $text = '    /**' . PHP_EOL;
+        $text .= '     * Update database.' . PHP_EOL;
+        $text .= '     *' . PHP_EOL;
+        $text .= '     * @return bool' . PHP_EOL;
+        $text .= '     */' . PHP_EOL;
+        $text .= '    public function updateDatabase()' . PHP_EOL;
+        $text .= '    {' . PHP_EOL;
+        $text .= PHP_EOL;
+        $text .= '    }' . PHP_EOL;
+
+        return $text;
+    }
+
+    public static function generateRollbackUpdateFilesMethod()
+    {
+        $text = '    /**' . PHP_EOL;
+        $text .= '     * Rollback update file changes.' . PHP_EOL;
+        $text .= '     *' . PHP_EOL;
+        $text .= '     * @return bool' . PHP_EOL;
+        $text .= '     */' . PHP_EOL;
+        $text .= '    public function rollbackUpdateFiles()' . PHP_EOL;
+        $text .= '    {' . PHP_EOL;
+        $text .= PHP_EOL;
+        $text .= '    }' . PHP_EOL;
+
+        return $text;
+    }
+
+    public static function generateRollbackDeleteFilesMethod()
+    {
+        $text = '    /**' . PHP_EOL;
+        $text .= '     * Rollback deleted files.' . PHP_EOL;
+        $text .= '     *' . PHP_EOL;
+        $text .= '     * @return bool' . PHP_EOL;
+        $text .= '     */' . PHP_EOL;
+        $text .= '    public function rollbackDeleteFiles()' . PHP_EOL;
+        $text .= '    {' . PHP_EOL;
+        $text .= PHP_EOL;
+        $text .= '    }' . PHP_EOL;
+
+        return $text;
+    }
+
+    public static function generateRollbackDatabaseChangesMethod()
+    {
+        $text = '    /**' . PHP_EOL;
+        $text .= '     * Rollback any database updates.' . PHP_EOL;
+        $text .= '     *' . PHP_EOL;
+        $text .= '     * @return bool' . PHP_EOL;
+        $text .= '     */' . PHP_EOL;
+        $text .= '    public function rollbackDatabaseChanges()' . PHP_EOL;
+        $text .= '    {' . PHP_EOL;
+        $text .= PHP_EOL;
         $text .= '    }' . PHP_EOL;
 
         return $text;

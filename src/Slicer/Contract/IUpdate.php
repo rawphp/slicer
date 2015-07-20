@@ -30,12 +30,40 @@ interface IUpdate
      *
      * @return bool
      */
-    public function updateFiles( );
+    public function updateFiles();
 
     /**
      * Delete old files.
      *
      * @return bool
      */
-    public function deleteFiles( );
+    public function deleteFiles();
+
+    /**
+     * Update database.
+     *
+     * @return bool
+     */
+    public function updateDatabase();
+
+    /**
+     * Rollback update file changes.
+     *
+     * @return bool
+     */
+    public function rollbackUpdateFiles();
+
+    /**
+     * Rollback deleted files.
+     *
+     * @return bool
+     */
+    public function rollbackDeleteFiles();
+
+    /**
+     * Rollback any database updates.
+     *
+     * @return bool
+     */
+    public function rollbackDatabaseChanges();
 }

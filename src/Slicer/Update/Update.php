@@ -1,13 +1,13 @@
 <?php
 
-namespace Slicer;
+namespace Slicer\Update;
 
 use Slicer\Contract\IUpdate;
 
 /**
  * Class Update
  *
- * @package Slicer
+ * @package Slicer\Update
  */
 abstract class Update implements IUpdate
 {

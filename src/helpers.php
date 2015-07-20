@@ -13,7 +13,11 @@ if ( !function_exists( 'base_path' ) )
     {
         $dir = ( isset( $_SERVER[ 'PWD' ] ) ? $_SERVER[ 'PWD' ] : __DIR__ . '/../' );
 
-        return clean_slicer_path( strtr( str_replace( [ 'phar://', 'update.phar' ], '', $dir ) . ( $path ? DIRECTORY_SEPARATOR . $path : $path ), '\\', '/' ) );
+        $path = strtr( str_replace( [ 'phar://', 'update.phar' ], '', $dir ) . ( $path ? DIRECTORY_SEPARATOR . $path : $path ), '\\', '/' );
+
+        $path = strtoupper( substr( $path, 0, 1 ) ) . substr( $path, 1 );
+
+        return clean_slicer_path( $path );
     }
 }
 

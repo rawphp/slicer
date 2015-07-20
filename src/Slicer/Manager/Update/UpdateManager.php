@@ -4,6 +4,7 @@ namespace Slicer\Manager\Update;
 
 use DateTime;
 use Exception;
+use Phar;
 use Slicer\Contract\IUpdate;
 use Slicer\Event\OnGetChangeProviderEvent;
 use Slicer\Event\PostCreateUpdateEvent;
@@ -20,6 +21,7 @@ use Slicer\Manager\Contract\IDownloadManager;
 use Slicer\Manager\Contract\IUpdateManager;
 use Slicer\Manager\Manager;
 use Slicer\Provider\Contract\IChangeProvider;
+use Slicer\Update\Generator\ClassGenerator;
 use SplFileInfo;
 use ZipArchive;
 
@@ -81,7 +83,7 @@ class UpdateManager extends Manager implements IUpdateManager
 
             // create update zip
             //$this->createFinalUpdateZip( $updateZipFile, $this->tmpDir . $className . '.php', $filesZip );
-            $this->createUpdatePhar( $updateZipFile, $className . '.php', $filesZip );
+            $this->compileUpdatePhar( $updateZipFile, $className . '.php', $filesZip );
         }
         catch ( Exception $e )
         {
@@ -112,7 +114,7 @@ class UpdateManager extends Manager implements IUpdateManager
             {
                 $info = new SplFileInfo( $file );
 
-                $zip->addFile( $file, str_replace( $this->config[ 'base_dir' ], '', $info->getPathname() ) );
+                $zip->addFile( $file, str_replace( $this->config->getBaseDir(), '', $info->getPathname() ) );
             }
 
             $zip->close();
@@ -138,22 +140,30 @@ class UpdateManager extends Manager implements IUpdateManager
     {
         $this->cleanupFiles[] = $file = $path . $className . '.php';
 
-        $snippetsDir = $this->config[ 'base_dir' ] . '/snippets/';
+        $snippetsDir = $this->config->getBaseDir() . '/res/';
 
         $contents = file_get_contents( $snippetsDir . 'header.txt' );
 
         $changedFiles[ 'deleted' ][] = 'file.txt';
 
-        $contents .= ClassGenerator::generateUpdateFilesMethod( $className, $this->config[ 'base_dir' ], array_merge( $changedFiles[ 'added' ], $changedFiles[ 'modified' ] ) );
+        $contents .= ClassGenerator::generateUpdateFilesMethod( $className, $this->config->getBaseDir(), array_merge( $changedFiles[ 'added' ], $changedFiles[ 'modified' ] ) );
         $contents .= PHP_EOL;
         $contents .= ClassGenerator::generateDeleteFilesMethod( $changedFiles[ 'deleted' ] );
+        $contents .= PHP_EOL;
+        $contents .= ClassGenerator::generateUpdateDatabaseMethod();
+        $contents .= PHP_EOL;
+        $contents .= ClassGenerator::generateRollbackUpdateFilesMethod();
+        $contents .= PHP_EOL;
+        $contents .= ClassGenerator::generateRollbackDeleteFilesMethod();
+        $contents .= PHP_EOL;
+        $contents .= ClassGenerator::generateRollbackDatabaseChangesMethod();
 
         $contents .= file_get_contents( $snippetsDir . 'footer.txt' );
 
-        $contents = str_replace( '{namespace}', $this->config[ 'update-file' ][ 'namespace' ], $contents );
+        $contents = str_replace( '{namespace}', $this->config->getUpdateNamespace(), $contents );
         $contents = str_replace( '{class_name}', $className, $contents );
 
-        return file_put_contents( $file, $contents );
+        return ( 0 < file_put_contents( $file, $contents ) );
     }
 
     /**
@@ -170,17 +180,8 @@ class UpdateManager extends Manager implements IUpdateManager
         }
     }
 
-    /**
-     * Create final update zip.
-     *
-     * @param string $updateZipFile
-     * @param string $classFile
-     * @param string $filesZip
-     *
-     * @return bool
-     */
-    public function createFinalUpdateZip( $updateZipFile, $classFile, $filesZip )
-    {
+//    public function createFinalUpdateZip( $updateZipFile, $classFile, $filesZip )
+//    {
 //        $zip = new ZipArchive();
 //
 //        if ( TRUE === $zip->open( $this->tmpDir . $updateZipFile, ZipArchive::CREATE ) )
@@ -203,18 +204,98 @@ class UpdateManager extends Manager implements IUpdateManager
 //        }
 //
 //        return FALSE;
-    }
+//    }
 
     /**
      * Create an executable update phar.
      *
-     * @param string $updatedZipFile
-     * @param string $classFile
-     * @param string $filesZip
+     * @param SplFileInfo $classFile
+     * @param SplFileInfo $filesZip
+     *
+     * @return bool
      */
-    public function createUpdatePhar( $updatedZipFile, $classFile, $filesZip )
+    public function compileUpdatePhar( SplFileInfo $classFile, SplFileInfo $filesZip )
     {
+        try
+        {
+            $pharFile = base_path( 'Update.phar' );
 
+            if ( file_exists( $pharFile ) )
+            {
+                unlink( $pharFile );
+            }
+
+            $phar = new Phar( $pharFile, 0, 'update.phar' );
+            $phar->setSignatureAlgorithm( Phar::SHA1 );
+
+            $phar->startBuffering();
+
+            // Add Update Class
+            $path    = strtr( str_replace( base_path() . DIRECTORY_SEPARATOR, '', $classFile->getRealPath() ), '\\', '/' );
+            $content = file_get_contents( $path );
+            $phar->addFromString( $path, $content );
+
+            // Add Zip File
+            $path    = 'res/files.zip';
+            $content = file_get_contents( $filesZip );
+            $phar->addFromString( $path, $content );
+
+            // Add update bin script
+            $updateFile = new SplFileInfo( base_path( 'res/update' ) );
+            $path       = 'bin/update';
+            $path       = strtr( $path, '\\', '/' );
+            $content    = file_get_contents( $updateFile->getRealPath() );
+            $phar->addFromString( $path, $content );
+
+            // Generate a Stub
+            $stub = $this->generateUpdateStub( $pharFile );
+            $phar->setStub( $stub );
+
+            $phar->stopBuffering();
+
+            return TRUE;
+        }
+        catch ( Exception $e )
+        {
+            echo $e->getMessage();
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * Generate an update Phar stub.
+     *
+     * @param string $pharFileName
+     *
+     * @return string
+     */
+    public function generateUpdateStub( $pharFileName )
+    {
+        $path = strtr( str_replace( base_path() . DIRECTORY_SEPARATOR, '', $pharFileName ), '\\', '/' );
+
+        $stub = "
+#!/usr/bin/env php
+<?php
+
+/*
+ * This file was generated by Slicer.
+ *
+ * (c) Tom Kaczocha <tom@rawphp.org>
+ *
+ * For the full copyright and license information, please view
+ * the license that is located at the bottom of this file.
+ */
+
+Phar::mapPhar( '{$path}' );
+
+";
+
+        return $stub . "
+require 'phar://{$path}/bin/update';
+
+__HALT_COMPILER();
+";
     }
 
     /**
