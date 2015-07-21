@@ -226,6 +226,8 @@ class Application extends BaseApplication
     }
 
     /**
+     * Returns the current Slicer instance.
+     *
      * @param bool|TRUE $required
      *
      * @return Slicer
