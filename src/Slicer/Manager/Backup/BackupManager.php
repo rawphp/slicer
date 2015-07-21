@@ -39,6 +39,10 @@ class BackupManager extends Manager implements IBackupManager
      */
     public function backup( array $options )
     {
+        $cwd = getcwd();
+
+        chdir( base_path() );
+
         $options = array_merge_recursive( $options, $this->config->getOptions() );
 
         $this->event->dispatch( PreBackupEvent::class, new PreBackupEvent( $options ) );
@@ -50,21 +54,23 @@ class BackupManager extends Manager implements IBackupManager
 
         try
         {
-            if ( file_exists( $options[ 'backup-file' ] ) )
+            $backupDir = $options[ 'backup-file' ];
+
+            if ( file_exists( $backupDir ) )
             {
-                unlink( $options[ 'backup-file' ] );
+                unlink( $backupDir );
             }
 
             $finder = new Finder();
             $finder->files()
                 ->ignoreVCS( TRUE )
                 ->ignoreUnreadableDirs( TRUE )
-                ->exclude( $this->config->getOptions()[ 'exclude-dirs' ] )
+                ->exclude( $this->config->getBackup()[ 'exclude-dirs' ] )
                 ->in( $this->config->getBaseDir() );
 
             $archive = new ZipArchive();
 
-            $status = $archive->open( $options[ 'backup-file' ], ZipArchive::CREATE );
+            $status = $archive->open( $backupDir, ZipArchive::CREATE );
 
             if ( TRUE === $status )
             {
@@ -85,7 +91,9 @@ class BackupManager extends Manager implements IBackupManager
             return $e;
         }
 
-        $this->event->dispatch( PostBackupEvent::class, new PostBackupEvent( $options[ 'backup-file' ], $options ) );
+        chdir( $cwd );
+
+        $this->event->dispatch( PostBackupEvent::class, new PostBackupEvent( $backupDir, $options ) );
 
         return TRUE;
     }

@@ -48,8 +48,8 @@ class NonInteractiveFileBuilder implements ISlicerFileBuilder
                     [
                         'name'        => 'slicer/slicer',
                         'description' => 'Site update manager',
-                        'app_key'     => '',
-                        'app_secret'  => '',
+                        'app-key'     => '',
+                        'app-secret'  => '',
                     ],
                 'options'         =>
                     [
@@ -59,39 +59,33 @@ class NonInteractiveFileBuilder implements ISlicerFileBuilder
                                 'backup-database' => TRUE,
                             ],
                     ],
-                'update_file'     =>
+                'update-file'     =>
                     [
                         'class'     => 'Slicer\\Update',
                         'namespace' => 'Slicer\\Update',
                     ],
-                'change_provider' =>
+                'change-provider' =>
                     [
                         'driver' => 'Git',
                         'class'  => 'Slicer\\Provider\\GitProvider',
                     ],
                 'signing'         =>
                     [
-                        'private_key' => 'private.key',
-                        'public_key'  => 'public.pem',
+                        'private-key' => 'private.key',
+                        'public-key'  => 'public.pem',
                     ],
                 'storage'         =>
                     [
-                        'source'      =>
-                            [
-                                'tmp-dir' => 'slicer/tmp',
-                            ],
-                        'destination' =>
-                            [
-                                'update-dir' => 'slicer/updates',
-                            ],
+                        'tmp-dir'    => 'slicer/tmp',
+                        'update-dir' => 'slicer/updates',
+                        "backup-dir" => 'slicer/backup',
                     ],
                 'backup'          =>
                     [
-                        "location"     => 'slicer/backup',
                         'exclude-dirs' => [ ],
                         'file-type'    => 'single',
                     ],
-                'base_dir'        => '',
+                'base-dir'        => '',
             ];
     }
 }

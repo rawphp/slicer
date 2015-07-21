@@ -70,7 +70,7 @@ class InstallationManager extends Manager implements IInstallationManager
 
             if ( '' !== $result )
             {
-                file_put_contents( base_path( $this->filename ), $result );
+                file_put_contents( $this->filename, $result );
 
                 $res = TRUE;
             }

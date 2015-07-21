@@ -15,6 +15,7 @@
 namespace Slicer\Test\Manager\Update;
 
 use Phar;
+use Slicer\Config;
 use Slicer\Factory;
 use Slicer\Manager\Update\UpdateManager;
 use Slicer\Provider\GitProvider;
@@ -41,6 +42,8 @@ class UpdateManagerTest extends TestCase
     protected $filesZipPath;
     /** @var  string */
     protected $updateClassName = 'Update';
+    /** @var  string */
+    protected $updateDir;
 
     /**
      * Sets up the fixture, for example, open a network connection.
@@ -50,6 +53,8 @@ class UpdateManagerTest extends TestCase
     {
         parent::setUp();
 
+        $this->updateDir = base_path( $this->config->getStorage()[ 'update-dir' ] ) . DIRECTORY_SEPARATOR;
+
         $this->manager = new UpdateManager( Factory::createConfig() );
         $this->manager->setEventDispatcher( new EventDispatcher() );
         $this->manager->setChangeProvider( new GitProvider() );
@@ -57,7 +62,7 @@ class UpdateManagerTest extends TestCase
         $this->preVerified  = FALSE;
         $this->postVerified = FALSE;
 
-        $this->filesZipPath = 'test-files.zip';
+        $this->filesZipPath = $this->tmpDir . 'test-files.zip';
     }
 
     /**
@@ -75,19 +80,19 @@ class UpdateManagerTest extends TestCase
             unlink( $this->filesZipPath );
         }
 
-        if ( file_exists( base_path( 'extracted' ) ) )
+        if ( file_exists( $this->tmpDir . 'extracted' ) )
         {
-            ( new Filesystem() )->remove( [ base_path( 'extracted' ) ] );
+            ( new Filesystem() )->remove( [ $this->tmpDir . 'extracted' ] );
         }
 
-        if ( file_exists( $this->updateClassName . '.php' ) )
+        if ( file_exists( $this->tmpDir . $this->updateClassName . '.php' ) )
         {
-            unlink( $this->updateClassName . '.php' );
+            unlink( $this->tmpDir . $this->updateClassName . '.php' );
         }
 
-        if ( file_exists( base_path( 'Update.phar' ) ) )
+        if ( file_exists( $this->updateDir . 'Update.phar' ) )
         {
-            unlink( base_path( 'Update.phar' ) );
+            unlink( $this->updateDir . 'Update.phar' );
         }
     }
 
@@ -116,13 +121,13 @@ class UpdateManagerTest extends TestCase
 
         $zip->open( $this->filesZipPath );
 
-        @mkdir( base_path( 'extracted' ) );
+        @mkdir( $this->tmpDir . 'extracted' );
 
-        $this->assertTrue( $zip->extractTo( base_path( 'extracted' ) ) );
+        $this->assertTrue( $zip->extractTo( $this->tmpDir . 'extracted' ) );
 
-        $this->assertTrue( file_exists( base_path( 'extracted/.gitignore' ) ) );
-        $this->assertTrue( file_exists( base_path( 'extracted/slicer.json' ) ) );
-        $this->assertTrue( file_exists( base_path( 'extracted/src/bootstrap.php' ) ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted/.gitignore' ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted/slicer.json' ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted/src/bootstrap.php' ) );
     }
 
     /**
@@ -132,7 +137,7 @@ class UpdateManagerTest extends TestCase
     {
         $files = $this->getChangedFiles();
 
-        $this->assertTrue( $this->manager->createUpdateClass( $this->updateClassName, '', $files ) );
+        $this->assertTrue( $this->manager->createUpdateClass( $this->updateClassName, $this->tmpDir, $files ) );
     }
 
     /**
@@ -156,25 +161,27 @@ class UpdateManagerTest extends TestCase
         $files = $this->getChangedFiles();
 
         $this->assertTrue( $this->manager->zipChangedFiles( $this->filesZipPath, $files ) );
-        $this->assertTrue( $this->manager->createUpdateClass( $this->updateClassName, '', $files ) );
+        $this->assertTrue( $this->manager->createUpdateClass( $this->updateClassName, $this->tmpDir, $files ) );
 
-        $classFile = new SplFileInfo( base_path( $this->updateClassName . '.php' ) );
-        $zipFile   = new SplFileInfo( base_path( $this->filesZipPath ) );
+        $classFile = new SplFileInfo( $this->tmpDir . $this->updateClassName . '.php' );
+        $zipFile   = new SplFileInfo( $this->filesZipPath );
 
         $this->assertTrue( $this->manager->compileUpdatePhar( $classFile, $zipFile ) );
-        $this->assertTrue( file_exists( base_path( 'update.phar' ) ) );
+        $this->assertTrue( file_exists( $this->updateDir . 'Update.phar' ) );
 
-        $phar = new Phar( base_path( 'Update.phar' ) );
+        $phar = new Phar( $this->updateDir . 'Update.phar' );
 
         $this->assertTrue( $phar->valid() );
 
         //echo $phar->getStub();
 
-        $this->assertTrue( $phar->extractTo( base_path( 'extracted' ) ) );
-        $this->assertTrue( file_exists( base_path( 'extracted' ) ) );
-        $this->assertTrue( file_exists( base_path( 'extracted/bin/update' ) ) );
-        $this->assertTrue( file_exists( base_path( 'extracted/res/files.zip' ) ) );
-        $this->assertTrue( file_exists( base_path( 'extracted/Update.php' ) ) );
+        mkdir( $this->tmpDir . 'extracted' );
+
+        $this->assertTrue( $phar->extractTo( $this->tmpDir . 'extracted' ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted' ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted/bin/update' ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted/res/files.zip' ) );
+        $this->assertTrue( file_exists( $this->tmpDir . 'extracted/Update.php' ) );
 
         unset( $phar );
     }

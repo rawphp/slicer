@@ -23,6 +23,24 @@ use PHPUnit_Framework_TestCase;
  */
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
+    /** @var  Config */
+    protected $config;
+    /** @var  string */
+    protected $tmpDir;
+
+    /**
+     * Sets up the fixture, for example, open a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->config = $this->getConfig();
+
+        $this->tmpDir = base_path( $this->config->getStorage()[ 'tmp-dir' ] ) . DIRECTORY_SEPARATOR;
+    }
+
     /**
      * Get configuration for tests.
      *

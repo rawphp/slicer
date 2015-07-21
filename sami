@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * This file is part of Slicer.
+ *
+ * Copyright (c) 2015 Tom Kaczocha <tom@rawphp.org>
+ *
+ * This Source Code is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * PHP version 5.6
+ */
+
+use Sami\Sami;
+use Symfony\Component\Finder\Finder;
+
+$iterator = Finder::create()
+    ->files()
+    ->name( '*.php' )
+    ->in( base_path( 'src' ) )
+    ->in( base_path( 'tests' ) );
+
+return new Sami(
+    $iterator,
+    [
+        'theme'     => 'default',
+        'title'     => 'Slicer API Documentation',
+        'build_dir' => base_path( 'docs/build' ),
+        'cache_dir' => base_path( 'docs/cache' ),
+    ]
+);

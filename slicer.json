@@ -24,15 +24,11 @@
     "public_key": "public.pem"
   },
   "storage": {
-    "source": {
-      "tmp-dir": "slicer/tmp"
-    },
-    "destination": {
-      "update-dir": "slicer/updates"
-    }
+    "tmp-dir": "slicer/tmp",
+    "update-dir": "slicer/updates",
+    "backup-dir": "slicer/backup"
   },
   "backup": {
-    "location": "slicer/backup",
     "exclude-dirs": [
       "cache",
       "fake"

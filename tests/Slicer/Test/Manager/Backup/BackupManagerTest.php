@@ -43,15 +43,13 @@ class BackupManagerTest extends TestCase
     protected static $backupOptions = [ ];
 
     /**
-     * This method is called before the first test of this test class is run.
-     *
-     * @since Method available since Release 3.4.0
+     * Setup before each test.
      */
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        parent::setUpBeforeClass();
+        parent::setUp();
 
-        self::$backupFile = 'test-backup.zip';
+        self::$backupFile = $this->tmpDir . 'test-backup.zip';
 
         self::$backupOptions =
             [
@@ -62,14 +60,6 @@ class BackupManagerTest extends TestCase
                         'debug' => FALSE,
                     ]
             ];
-    }
-
-    /**
-     * Setup before each test.
-     */
-    public function setUp()
-    {
-        parent::setUp();
 
         $this->manager = new BackupManager( $this->getConfig() );
         $this->manager->setEventDispatcher( new EventDispatcher() );
@@ -77,9 +67,9 @@ class BackupManagerTest extends TestCase
         $this->preVerified  = FALSE;
         $this->postVerified = FALSE;
 
-        if ( file_exists( base_path( 'extracted' ) ) )
+        if ( file_exists( $this->tmpDir . 'extracted' ) )
         {
-            ( new Filesystem() )->remove( [ base_path( 'extracted' ) ] );
+            ( new Filesystem() )->remove( [ $this->tmpDir . 'extracted' ] );
         }
     }
 
@@ -96,9 +86,9 @@ class BackupManagerTest extends TestCase
             unlink( self::$backupFile );
         }
 
-        if ( file_exists( base_path( 'extracted' ) ) )
+        if ( file_exists( $this->tmpDir . 'extracted' ) )
         {
-            ( new Filesystem() )->remove( [ base_path( 'extracted' ) ] );
+            ( new Filesystem() )->remove( [ $this->tmpDir . 'extracted' ] );
         }
     }
 
@@ -156,24 +146,29 @@ class BackupManagerTest extends TestCase
 
             $this->assertEquals( 'No error', $zip->getStatusString() );
 
-            mkdir( base_path( 'extracted' ) );
+            $dir = $this->tmpDir . 'extracted';
 
-            $this->assertTrue( $zip->extractTo( base_path( 'extracted' ) ) );
+            if ( !file_exists( $dir ) )
+            {
+                mkdir( $dir );
+            }
 
-            $this->dirHasFile( base_path( 'extracted' ), 'bin' );
-            $this->dirHasFile( base_path( 'extracted' ), 'res' );
-            $this->dirHasFile( base_path( 'extracted' ), 'src' );
-            $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer' );
-            $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Manager/Backup' );
-            $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Command' );
-            $this->dirHasFile( base_path( 'extracted' ), 'src/Slicer/Command/BackupCommand.php' );
-            $this->dirHasFile( base_path( 'extracted' ), 'tests' );
-            $this->dirHasFile( base_path( 'extracted' ), 'vendor' );
-            $this->dirHasFile( base_path( 'extracted' ), 'composer.json' );
-            $this->dirHasFile( base_path( 'extracted' ), 'composer.lock' );
-            $this->dirHasFile( base_path( 'extracted' ), 'LICENSE' );
-            $this->dirHasFile( base_path( 'extracted' ), 'phpunit.xml.dist' );
-            $this->dirHasFile( base_path( 'extracted' ), 'slicer.json' );
+            $this->assertTrue( $zip->extractTo( $dir ) );
+
+            $this->dirHasFile( $dir, 'bin' );
+            $this->dirHasFile( $dir, 'res' );
+            $this->dirHasFile( $dir, 'src' );
+            $this->dirHasFile( $dir, 'src/Slicer' );
+            $this->dirHasFile( $dir, 'src/Slicer/Manager/Backup' );
+            $this->dirHasFile( $dir, 'src/Slicer/Command' );
+            $this->dirHasFile( $dir, 'src/Slicer/Command/BackupCommand.php' );
+            $this->dirHasFile( $dir, 'tests' );
+            $this->dirHasFile( $dir, 'vendor' );
+            $this->dirHasFile( $dir, 'composer.json' );
+            $this->dirHasFile( $dir, 'composer.lock' );
+            $this->dirHasFile( $dir, 'LICENSE' );
+            $this->dirHasFile( $dir, 'phpunit.xml.dist' );
+            $this->dirHasFile( $dir, 'slicer.json' );
 
             $this->postVerified = TRUE;
         }

@@ -48,6 +48,8 @@ class InstallationManagerTest extends TestCase
         $this->manager = new InstallationManager( Factory::createConfig() );
         $this->manager->setEventDispatcher( new EventDispatcher() );
         $this->manager->setFilename( $this->fileName );
+
+        $this->fileName = $this->tmpDir . $this->fileName;
     }
 
     /**
@@ -70,7 +72,7 @@ class InstallationManagerTest extends TestCase
     public function testInitialization()
     {
         $this->assertNotNull( $this->manager );
-        $this->assertEquals( $this->fileName, $this->manager->getFilename() );
+        $this->assertEquals( $this->fileName, $this->tmpDir . $this->manager->getFilename() );
     }
 
     /**
@@ -95,6 +97,7 @@ class InstallationManagerTest extends TestCase
     public function testInstallWithFileBuilder( $builder )
     {
         $this->manager->setFileBuilder( $builder );
+        $this->manager->setFilename( $this->fileName );
 
         $this->assertTrue( $this->manager->install() );
 
@@ -105,12 +108,12 @@ class InstallationManagerTest extends TestCase
         $this->assertTrue( is_string( $content ) );
         $this->assertContains( '"app":', $content );
         $this->assertContains( '"options":', $content );
-        $this->assertContains( '"update_file":', $content );
-        $this->assertContains( '"change_provider":', $content );
+        $this->assertContains( '"update-file":', $content );
+        $this->assertContains( '"change-provider":', $content );
         $this->assertContains( '"signing":', $content );
         $this->assertContains( '"storage":', $content );
         $this->assertContains( '"backup":', $content );
-        $this->assertContains( '"base_dir":', $content );
+        $this->assertContains( '"base-dir":', $content );
     }
 
     /**

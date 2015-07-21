@@ -63,11 +63,11 @@ class NonInteractiveFileBuilderTest extends TestCase
         $this->assertTrue( is_string( $content ) );
         $this->assertContains( '"app":', $content );
         $this->assertContains( '"options":', $content );
-        $this->assertContains( '"update_file":', $content );
-        $this->assertContains( '"change_provider":', $content );
+        $this->assertContains( '"update-file":', $content );
+        $this->assertContains( '"change-provider":', $content );
         $this->assertContains( '"signing":', $content );
         $this->assertContains( '"storage":', $content );
         $this->assertContains( '"backup":', $content );
-        $this->assertContains( '"base_dir":', $content );
+        $this->assertContains( '"base-dir":', $content );
     }
 }

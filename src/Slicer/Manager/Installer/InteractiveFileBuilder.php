@@ -74,7 +74,7 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
 
         echo $file . PHP_EOL . PHP_EOL;
 
-        $confirm = new ConfirmationQuestion( 'How does this look? Continue creating the file? [<comment>yes</comment>] ', TRUE );
+        $confirm = new ConfirmationQuestion( PHP_EOL . '<question>How does this look? Continue creating the file?</question> [<comment>yes</comment>] ', TRUE );
 
         if ( TRUE === $this->helper->ask( $this->input, $this->output, $confirm ) )
         {
@@ -147,8 +147,8 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
                         [
                             'name'        => $data[ 'app-name' ],
                             'description' => $data[ 'app-description' ],
-                            'app_key'     => $data[ 'app-key' ],
-                            'app_secret'  => $data[ 'app-secret' ],
+                            'app-key'     => $data[ 'app-key' ],
+                            'app-secret'  => $data[ 'app-secret' ],
                         ],
                     'options'         =>
                         [
@@ -158,45 +158,39 @@ class InteractiveFileBuilder extends NonInteractiveFileBuilder
                                     'backup-database' => $data[ 'backup-database' ],
                                 ],
                         ],
-                    'update_file'     =>
+                    'update-file'     =>
                         [
                             'class'     => $data[ 'update-class' ],
                             'namespace' => $data[ 'update-namespace' ],
                         ],
-                    'change_provider' =>
+                    'change-provider' =>
                         [
                             'driver' => $data[ 'change-provider' ],
                             'class'  => $this->getChangeProviderClass( $data[ 'change-provider' ] ),
                         ],
                     'signing'         =>
                         [
-                            'private_key' => $data[ 'private-key' ],
-                            'public_key'  => $data[ 'public-key' ],
+                            'private-key' => $data[ 'private-key' ],
+                            'public-key'  => $data[ 'public-key' ],
                         ],
                     'storage'         =>
                         [
-                            'source'      =>
-                                [
-                                    'tmp-dir' => 'slicer' . DIRECTORY_SEPARATOR . 'tmp',
-                                ],
-                            'destination' =>
-                                [
-                                    'update-dir' => 'slicer' . DIRECTORY_SEPARATOR . 'updates',
-                                ],
+                            'tmp-dir'    => 'slicer' . DIRECTORY_SEPARATOR . 'tmp',
+                            'update-dir' => 'slicer' . DIRECTORY_SEPARATOR . 'updates',
+                            'backup-dir' => $data[ 'backup-dir' ],
                         ],
                     'backup'          =>
                         [
-                            'location'     => $data[ 'backup-dir' ],
                             'exclude-dirs' => explode( ',', $data[ 'backup-ignore' ] ),
                             'file-type'    => $data[ 'backup-type' ],
                         ],
-                    'base_dir'        => '',
+                    'base-dir'        => '',
                 ]
             );
 
         $file[ 'app' ][ 'name' ]            = strtr( $file[ 'app' ][ 'name' ], "/", "/" );
-        $file[ 'signing' ][ 'private_key' ] = strtr( $file[ 'signing' ][ 'private_key' ], '\/', '/' );
-        $file[ 'signing' ][ 'public_key' ]  = strtr( $file[ 'signing' ][ 'public_key' ], '\/', '/' );
+        $file[ 'signing' ][ 'private-key' ] = strtr( $file[ 'signing' ][ 'private-key' ], '\/', '/' );
+        $file[ 'signing' ][ 'public-key' ]  = strtr( $file[ 'signing' ][ 'public-key' ], '\/', '/' );
 
         $dirs = [ ];
 

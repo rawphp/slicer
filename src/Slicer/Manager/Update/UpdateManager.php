@@ -70,7 +70,7 @@ class UpdateManager extends Manager implements IUpdateManager
 
         $name = 'Update-' . $date->format( 'y-m-d-h-m-s' );
 
-        $this->tmpDir = str_replace( '/', DIRECTORY_SEPARATOR, $this->config[ 'storage' ][ 'source' ][ 'tmp-dir' ] . DIRECTORY_SEPARATOR );
+        $this->tmpDir = str_replace( '/', DIRECTORY_SEPARATOR, $this->config->getStorage()[ 'tmp-dir' ] ) . DIRECTORY_SEPARATOR;
 
         $className     = 'TestUpdate';// . $date->format( 'ymdhms' ) . '.php';
         $updateZipFile = $name . '.zip';
@@ -231,7 +231,7 @@ class UpdateManager extends Manager implements IUpdateManager
     {
         try
         {
-            $pharFile = base_path( 'Update.phar' );
+            $pharFile = $this->config->getStorage()[ 'update-dir' ] . '/Update.phar';
 
             if ( file_exists( $pharFile ) )
             {
@@ -244,13 +244,13 @@ class UpdateManager extends Manager implements IUpdateManager
             $phar->startBuffering();
 
             // Add Update Class
-            $path    = strtr( str_replace( base_path() . DIRECTORY_SEPARATOR, '', $classFile->getRealPath() ), '\\', '/' );
-            $content = file_get_contents( $path );
+            $path    = strtr( str_replace( strtr( base_path( $this->config->getStorage()[ 'tmp-dir' ] ) . '/', '/', '\\' ), '', $classFile->getRealPath() ), '\\', '/' );
+            $content = file_get_contents( $classFile->getRealPath() );
             $phar->addFromString( $path, $content );
 
             // Add Zip File
             $path    = 'res/files.zip';
-            $content = file_get_contents( $filesZip );
+            $content = file_get_contents( $filesZip->getRealPath() );
             $phar->addFromString( $path, $content );
 
             // Add update bin script

@@ -45,6 +45,8 @@ class Slicer
     protected $backupManager;
 
     /**
+     * Get download manager.
+     *
      * @return IDownloadManager
      */
     public function getDownloadManager()
@@ -53,6 +55,8 @@ class Slicer
     }
 
     /**
+     * Set download manager.
+     *
      * @param IDownloadManager $downloadManager
      *
      * @return Slicer
@@ -65,6 +69,8 @@ class Slicer
     }
 
     /**
+     * Get installation manager.
+     *
      * @return IInstallationManager
      */
     public function getInstallationManager()
@@ -73,6 +79,8 @@ class Slicer
     }
 
     /**
+     * Set installation manager.
+     *
      * @param IInstallationManager $installationManager
      *
      * @return Slicer
@@ -85,6 +93,8 @@ class Slicer
     }
 
     /**
+     * Get config.
+     *
      * @return Config
      */
     public function getConfig()
@@ -93,6 +103,8 @@ class Slicer
     }
 
     /**
+     * Set config.
+     *
      * @param Config $config
      *
      * @return Slicer
@@ -105,6 +117,8 @@ class Slicer
     }
 
     /**
+     * Get event dispatcher.
+     *
      * @return EventDispatcher
      */
     public function getEventDispatcher()
@@ -113,6 +127,8 @@ class Slicer
     }
 
     /**
+     * Set event dispatcher.
+     *
      * @param EventDispatcher $eventDispatcher
      *
      * @return Slicer
@@ -125,6 +141,8 @@ class Slicer
     }
 
     /**
+     * Get update manager.
+     *
      * @return IUpdateManager
      */
     public function getUpdateManager()
@@ -133,6 +151,8 @@ class Slicer
     }
 
     /**
+     * Set update manager.
+     *
      * @param IUpdateManager $updateManager
      *
      * @return Slicer
@@ -145,6 +165,8 @@ class Slicer
     }
 
     /**
+     * Get backup manager.
+     *
      * @return IBackupManager
      */
     public function getBackupManager()
@@ -153,6 +175,8 @@ class Slicer
     }
 
     /**
+     * Set backup manager.
+     *
      * @param IBackupManager $backupManager
      *
      * @return Slicer
