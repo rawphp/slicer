@@ -134,12 +134,12 @@ class Factory
         $settings = json_decode( file_get_contents( Factory::getSlicerFile() ), TRUE );
 
         $settings[ 'home' ]      = $home;
-        $settings[ 'cache_dir' ] = $cacheDir;
+        $settings[ 'cache-dir' ] = $cacheDir;
         $settings[ 'cwd' ]       = $cwd;
 
-        if ( '' === $settings[ 'base_dir' ] )
+        if ( '' === $settings[ 'base-dir' ] )
         {
-            $settings[ 'base_dir' ] = $cwd;
+            $settings[ 'base-dir' ] = $cwd;
         }
 
         $config = new Config( $settings );

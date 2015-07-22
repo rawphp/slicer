@@ -23,7 +23,6 @@ use Slicer\Command\CreateCommand;
 use Slicer\Command\PullUpdateCommand;
 use Slicer\Command\PushUpdateCommand;
 use Slicer\Command\UpdateCommand;
-use Slicer\Exception\NoBaseDirectoryException;
 use Slicer\Factory;
 use Slicer\Slicer;
 use RuntimeException;
@@ -73,32 +72,32 @@ class Application extends BaseApplication
     protected function init()
     {
         $dirs = [
-            'slicer_dir'  => base_path( 'slicer' ),
-            'tmp_dir'     => base_path( 'slicer/tmp' ),
-            'updates_dir' => base_path( 'slicer/updates' ),
-            'backup_dir'  => base_path( 'slicer/backup' ),
+            'slicer-dir'  => base_path( 'slicer' ),
+            'tmp-dir'     => base_path( 'slicer/tmp' ),
+            'updates-dir' => base_path( 'slicer/updates' ),
+            'backup-dir'  => base_path( 'slicer/backup' ),
         ];
 
         $this->slicer = Factory::create();
 
         if ( '' !== $this->slicer->getConfig()->getSlicerDir() )
         {
-            $dir[ 'slicer_dir' ] = $this->slicer->getConfig()->getSlicerDir();
+            $dir[ 'slicer-dir' ] = $this->slicer->getConfig()->getSlicerDir();
         }
 
-        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'source' ][ 'tmp-dir' ] )
+        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'tmp-dir' ] )
         {
-            $dirs[ 'tmp_dir' ] = $this->slicer->getConfig()->getStorage()[ 'source' ][ 'tmp-dir' ];
+            $dirs[ 'tmp-dir' ] = $this->slicer->getConfig()->getStorage()[ 'tmp-dir' ];
         }
 
-        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'destination' ][ 'update-dir' ] )
+        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'update-dir' ] )
         {
-            $dirs[ 'updates_dir' ] = $this->slicer->getConfig()->getStorage()[ 'destination' ][ 'update-dir' ];
+            $dirs[ 'updates-dir' ] = $this->slicer->getConfig()->getStorage()[ 'update-dir' ];
         }
 
-        if ( '' !== $this->slicer->getConfig()->getBackup()[ 'location' ] )
+        if ( '' !== $this->slicer->getConfig()->getStorage()[ 'backup-dir' ] )
         {
-            $dirs[ 'backup_dir' ] = $this->slicer->getConfig()->getBackup()[ 'location' ];
+            $dirs[ 'backup-dir' ] = $this->slicer->getConfig()->getStorage()[ 'backup-dir' ];
         }
 
         foreach ( $dirs as $dir )
@@ -163,7 +162,7 @@ class Application extends BaseApplication
 
         if ( defined( 'SLICER_DEV_WARNING_TIME' ) )
         {
-            $commandName = 'self-update';
+            //$commandName = 'self-update';
 
         }
 

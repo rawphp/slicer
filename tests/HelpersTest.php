@@ -35,13 +35,13 @@ class HelpersTest extends TestCase
         $expected = [ 'app'     =>
                           [ 'name' => 'slicer/slicer' ],
                       'signing' =>
-                          [ 'private_key' => 'private.key' ],
+                          [ 'private-key' => 'private.key' ],
         ];
 
         $config = get_slicer_config();
 
         $this->assertEquals( $expected[ 'app' ][ 'name' ], $config[ 'app' ][ 'name' ] );
-        $this->assertEquals( $expected[ 'signing' ][ 'private_key' ], $config[ 'signing' ][ 'private_key' ] );
+        $this->assertEquals( $expected[ 'signing' ][ 'private-key' ], $config[ 'signing' ][ 'private-key' ] );
     }
 
     /**

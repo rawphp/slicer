@@ -2,8 +2,8 @@
   "app": {
     "name": "slicer/slicer",
     "description": "",
-    "app_key": "",
-    "app_secret": ""
+    "app-key": "",
+    "app-secret": ""
   },
   "options": {
     "update": {
@@ -11,17 +11,17 @@
       "backup-database": true
     }
   },
-  "update_file": {
+  "update-file": {
     "class": "Slicer\\Update",
     "namespace": "Slicer\\Update"
   },
-  "change_provider": {
+  "change-provider": {
     "driver": "Git",
     "class": "Slicer\\Provider\\GitProvider"
   },
   "signing": {
-    "private_key": "private.key",
-    "public_key": "public.pem"
+    "private-key": "private.key",
+    "public-key": "public.pem"
   },
   "storage": {
     "tmp-dir": "slicer/tmp",
@@ -35,5 +35,5 @@
     ],
     "file-type": "single"
   },
-  "base_dir": ""
+  "base-dir": ""
 }

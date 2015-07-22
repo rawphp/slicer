@@ -73,10 +73,10 @@ class Config
         {
             switch ( $key )
             {
-                case 'base_dir':
+                case 'base-dir':
                     $this->baseDir = $value;
                     break;
-                case 'cache_dir':
+                case 'cache-dir':
                     $this->cacheDir = $value;
                     break;
                 case 'app':
@@ -90,10 +90,10 @@ class Config
                             case 'description':
                                 $this->description = $v;
                                 break;
-                            case 'app_key':
+                            case 'app-key':
                                 $this->appKey = $v;
                                 break;
-                            case 'app_secret':
+                            case 'app-secret':
                                 $this->appSecret = $v;
                                 break;
                         }
@@ -102,11 +102,11 @@ class Config
                 case 'options':
                     $this->options = array_merge_recursive( $this->options, $value );
                     break;
-                case 'update_file':
+                case 'update-file':
                     $this->updateFile      = $value[ 'class' ];
                     $this->updateNamespace = $value[ 'namespace' ];
                     break;
-                case 'change_provider':
+                case 'change-provider':
                     $this->changeProvider = $value;
                     break;
                 case 'signing':
