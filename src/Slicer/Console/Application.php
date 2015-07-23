@@ -22,6 +22,7 @@ use Slicer\Command\InitializeCommand;
 use Slicer\Command\CreateCommand;
 use Slicer\Command\PullUpdateCommand;
 use Slicer\Command\PushUpdateCommand;
+use Slicer\Command\RestoreBackupCommand;
 use Slicer\Command\UpdateCommand;
 use Slicer\Factory;
 use Slicer\Slicer;
@@ -272,6 +273,7 @@ class Application extends BaseApplication
             parent::getDefaultCommands(),
             [
                 new BackupCommand(),
+                new RestoreBackupCommand(),
                 new CheckCommand(),
                 new InitializeCommand(),
                 new CreateCommand(),

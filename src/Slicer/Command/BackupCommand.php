@@ -42,13 +42,7 @@ class BackupCommand extends Command
         $this
             ->setName( 'backup' )
             ->setDescription( 'Create a new backup' )
-            ->addArgument(
-                'base_dir',
-                InputArgument::OPTIONAL,
-                'The path to the base directory'
-            )
-            ->addOption( 'full', 'f', InputOption::VALUE_NONE, 'Create a full backup' )
-            ->addOption( 'restore', 'r', InputOption::VALUE_NONE, 'Only create a restore backup [default]' );
+            ->addOption( 'type', 't', InputOption::VALUE_OPTIONAL, 'Backup file type [ single, daily, unique ] default( single )' );
     }
 
     /**
@@ -67,31 +61,65 @@ class BackupCommand extends Command
 
         $date = new DateTime();
 
-        switch ( $config->getOptions()[ 'file-type' ] )
+        $dir = base_path( $config->getStorage()[ 'backup-dir' ] );
+
+        $type = $config->getBackup()[ 'file-type' ];
+
+        if ( $input->hasOption( 'type' ) && '' !== trim( $input->getOption( 'type' ) ) )
+        {
+            $type = $input->getOption( 'type' );
+
+            if ( !in_array( $type, [ 'daily', 'unique', 'single' ] ) )
+            {
+                $output->writeln( '<error>Unknown type ' . $type . '. Using \'single\' by default.</error>' );
+            }
+        }
+
+        switch ( $type )
         {
             case 'daily':
-                $fileName = '/backup-' . $date->format( 'Ymd' ) . '.zip';
+                $fileName = clean_slicer_path( $dir . '/backup-' . $date->format( 'Ymd' ) . '.zip' );
                 break;
             case 'unique':
-                $fileName = '/backup-' . $date->format( 'Ymdhms' ) . '.zip';
+                $fileName = clean_slicer_path( $dir . '/backup-' . $date->format( 'Ymdhms' ) . '.zip' );
                 break;
             case 'single':
             default:
-                $fileName = '/backup.zip';
+                $fileName = clean_slicer_path( $dir . '/backup.zip' );
                 break;
         }
 
-        $file = $this->backupManager->getConfig()->getCacheDir() . $fileName;
+        $baseDir = base_path();
+
+        if ( $input->hasOption( 'working-dir' ) && '' !== trim( $input->getOption( 'working-dir' ) ) )
+        {
+            $baseDir = $input->getOption( 'working-dir' );
+
+            if ( !file_exists( $baseDir ) )
+            {
+                if ( file_exists( base_path( $baseDir ) ) )
+                {
+                    $baseDir = base_path( $baseDir );
+                }
+                else
+                {
+                    $output->writeln( 'Working Directory "' . $baseDir . '" not found' );
+
+                    return 1;
+                }
+            }
+        }
 
         $status = $this->backupManager->backup(
             [
-                'backup-file' => $file,
+                'backup-file' => $fileName,
                 'backup-type' => $input->hasOption( 'full' ) ? 'full' : 'restore',
+                'base-dir'    => $baseDir,
                 'output'      =>
                     [
-                        'debug'   => $input->hasOption( 'debug' ) ? $input->getOption( 'debug' ) : FALSE,
-                        'quiet'   => $input->hasOption( 'quiet' ),
-                        'verbose' => $input->hasOption( 'verbose' ) ? $input->getOption( 'verbose' ) : NULL,
+                        'debug'   => $input->getOption( 'debug' ),
+                        'quiet'   => ( TRUE === $input->getOption( 'debug' ) ) ? FALSE : TRUE,
+                        'verbose' => $input->getOption( 'verbose' ),
                     ]
             ]
         );
@@ -99,8 +127,12 @@ class BackupCommand extends Command
         if ( $status instanceof Exception )
         {
             $output->writeln( '<error>' . $status->getMessage() . '</error>' );
+
+            $status = 0;
         }
 
-        $output->writeln( 'Backup finished: ' . $status );
+        $status = ( 1 === ( int ) $status ) ? 'Success' : 'Failed';
+
+        $output->writeln( 'Backup Status: <info>' . $status . '</info>' );
     }
 }

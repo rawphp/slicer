@@ -33,7 +33,9 @@ interface IBackupManager extends IManager
     /**
      * Restore from backup.
      *
+     * @param array $options
+     *
      * @return bool
      */
-    public function restore();
+    public function restore( array $options );
 }

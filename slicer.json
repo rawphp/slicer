@@ -31,7 +31,7 @@
   "backup": {
     "exclude-dirs": [
       "cache",
-      "fake"
+      "docs"
     ],
     "file-type": "single"
   },

@@ -21,7 +21,7 @@
         <exclude>
             <group>slow</group>
             <group>interactive</group>
-            <group>functional</group>
+            <group>command</group>
         </exclude>
     </groups>
 

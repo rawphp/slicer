@@ -16,7 +16,9 @@ namespace Slicer\Manager\Backup;
 
 use Exception;
 use Slicer\Event\PostBackupEvent;
+use Slicer\Event\PostRestoreBackupEvent;
 use Slicer\Event\PreBackupEvent;
+use Slicer\Event\PreRestoreBackupEvent;
 use Slicer\Manager\Contract\IBackupManager;
 use Slicer\Manager\Manager;
 use SplFileInfo;
@@ -35,15 +37,15 @@ class BackupManager extends Manager implements IBackupManager
      *
      * @param array $options
      *
-     * @return bool
+     * @return bool|Exception
      */
     public function backup( array $options )
     {
         $cwd = getcwd();
 
-        chdir( base_path() );
+        chdir( $options[ 'base-dir' ] );
 
-        $options = array_merge_recursive( $options, $this->config->getOptions() );
+        $options = array_replace_recursive( $this->config->getOptions(), $options );
 
         $this->event->dispatch( PreBackupEvent::class, new PreBackupEvent( $options ) );
 
@@ -52,13 +54,13 @@ class BackupManager extends Manager implements IBackupManager
             print_r( $options );
         }
 
+        $backupFile = $options[ 'backup-file' ];
+
         try
         {
-            $backupDir = $options[ 'backup-file' ];
-
-            if ( file_exists( $backupDir ) )
+            if ( file_exists( $backupFile ) )
             {
-                unlink( $backupDir );
+                unlink( $backupFile );
             }
 
             $finder = new Finder();
@@ -66,11 +68,11 @@ class BackupManager extends Manager implements IBackupManager
                 ->ignoreVCS( TRUE )
                 ->ignoreUnreadableDirs( TRUE )
                 ->exclude( $this->config->getBackup()[ 'exclude-dirs' ] )
-                ->in( $this->config->getBaseDir() );
+                ->in( $options[ 'base-dir' ] );
 
             $archive = new ZipArchive();
 
-            $status = $archive->open( $backupDir, ZipArchive::CREATE );
+            $status = $archive->open( $backupFile, ZipArchive::CREATE );
 
             if ( TRUE === $status )
             {
@@ -80,32 +82,77 @@ class BackupManager extends Manager implements IBackupManager
                 }
 
                 $archive->close();
+
+                $result = TRUE;
             }
             else
             {
-                return $status;
+                $result = $status;
             }
         }
         catch ( Exception $e )
         {
-            return $e;
+            $result = $e;
         }
 
         chdir( $cwd );
 
-        $this->event->dispatch( PostBackupEvent::class, new PostBackupEvent( $backupDir, $options ) );
+        $this->event->dispatch( PostBackupEvent::class, new PostBackupEvent( $backupFile, $options ) );
 
-        return TRUE;
+        return $result;
     }
 
     /**
      * Restore from backup.
      *
+     * @param array $options
+     *
      * @return bool
      */
-    public function restore()
+    public function restore( array $options )
     {
-        // TODO: Implement restore() method.
+        $cwd = getcwd();
+
+        chdir( $options[ 'base-dir' ] );
+
+        $options = array_replace_recursive( $this->config->getOptions(), $options );
+
+        if ( $options[ 'output' ][ 'debug' ] )
+        {
+            print_r( $options );
+        }
+
+        $event = new PreRestoreBackupEvent( $options );
+        $this->event->dispatch( PreRestoreBackupEvent::class, $event );
+
+        try
+        {
+            if ( !is_writable( $options[ 'base-dir' ] ) )
+            {
+                return new Exception( 'Directory: "' . $options[ 'base-dir' ] . '" is not writable' );
+            }
+
+            $archive = new ZipArchive();
+
+            $archive->open( $options[ 'file' ] );
+
+            $archive->extractTo( $options[ 'base-dir' ] );
+
+            $archive->close();
+
+            $status = TRUE;
+        }
+        catch ( Exception $e )
+        {
+            $status = FALSE;
+        }
+
+        $event = new PostRestoreBackupEvent( $status, $options );
+        $this->event->dispatch( PostRestoreBackupEvent::class, $event );
+
+        chdir( $cwd );
+
+        return $event->status();
     }
 
     protected function addFile( ZipArchive $archive, SplFileInfo $file )
